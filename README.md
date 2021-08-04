@@ -1,5 +1,5 @@
 # QMidiCore-Quaver-Stream-Renderer
-QMidiCore Quaver Stream Renderer (简称QQS) 是一个黑乐谱渲染器.
+QMidiCore Quaver Stream Renderer (简称QQS) 是一个黑乐谱渲染器. 原作者是qishipai.
 
 ### 项目引用 Project reference
 - SharpExtension 提供一些操作非托管内存以及流的方法. Provides some methods of allocating, freeing unmanaged memory and stream operations.
