@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,7 +31,7 @@ namespace QQS_UI
         private Renderer renderer = null;
         private readonly Config config;
         private const string DefaultVideoFilter = "视频 (*.mp4, *.avi, *.mov)|*.mp4;*.avi;*.mov",
-            TransparentVideoFileter = "视频 (*.mp4, *.mov)|*.mp4, *.mov";
+            PNGVideoFilter = "视频 (*.mp4, *.mov)|*.mp4, *.mov";
         public MainWindow()
         {
             InitializeComponent();
@@ -170,7 +170,7 @@ namespace QQS_UI
         {
             SaveFileDialog dialog = new SaveFileDialog()
             {
-                Filter = options.PNGEncoder ? TransparentVideoFileter : DefaultVideoFilter,
+                Filter = options.PNGEncoder ? PNGVideoFilter : DefaultVideoFilter,
                 Title = "选择保存输出视频的位置",
                 InitialDirectory = config.GetCachedVideoDirectory()
             };
