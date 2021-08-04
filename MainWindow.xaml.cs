@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,7 +31,8 @@ namespace QQS_UI
         private Renderer renderer = null;
         private readonly Config config;
         private const string DefaultVideoFilter = "视频 (*.mp4, *.avi, *.mov)|*.mp4;*.avi;*.mov",
-            PNGVideoFilter = "视频 (*.mp4, *.mov)|*.mp4, *.mov";
+            PNGVideoFilter = "视频 (*.mp4, *.mov)|*.mp4, *.mov",
+            TransparentVideoFilter = "视频 (*.mov)|*.mov";
         public MainWindow()
         {
             InitializeComponent();
@@ -170,7 +171,7 @@ namespace QQS_UI
         {
             SaveFileDialog dialog = new SaveFileDialog()
             {
-                Filter = options.PNGEncoder ? PNGVideoFilter : DefaultVideoFilter,
+                Filter = options.TransparentBackground ? TransparentVideoFilter : (options.PNGEncoder ? PNGVideoFilter : DefaultVideoFilter),
                 Title = "选择保存输出视频的位置",
                 InitialDirectory = config.GetCachedVideoDirectory()
             };
@@ -220,6 +221,18 @@ namespace QQS_UI
             options.CRF = (int)crfSelect.Value;
         }
 
+        private void enableTranparentBackground_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.TransparentBackground = enableTranparentBackground.IsChecked;
+            if (options.TransparentBackground)
+            {
+                if (!outputPath.Text.EndsWith(".mov"))
+                {
+                    outputPath.Text = outputPath.Text.Substring(0, outputPath.Text.Length - 4) + ".mov";
+                }
+            }
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
@@ -262,8 +275,9 @@ namespace QQS_UI
                 }
             }
             options.PNGEncoder = usePNGEncoder.IsChecked;
-            if (options.PNGEncoder)
+            if (!options.PNGEncoder)
             {
+                enableTranparentBackground.IsChecked = false;
                 options.TransparentBackground = false;
             }
         }

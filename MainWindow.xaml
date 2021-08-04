@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.0.3" Height="540" Width="960" Background="#FFFFFF">
+        Title="QMidiCore Quaver Stream Renderer 1.0.4" Height="540" Width="960" Background="#FFFFFF">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -100,6 +100,14 @@
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
                 <Button Content="停止" Width="260" Margin="0,0,0,0" IsEnabled="{Binding ElementName=startRender, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
+                <ui:BetterCheckbox Text="透明视频背景" IsChecked="False" Margin="5,0,0,0" x:Name="enableTranparentBackground" CheckToggled="enableTranparentBackground_CheckToggled">
+                    <ui:BetterCheckbox.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                            <Binding Path="IsEnabled" ElementName="notRendering"/>
+                            <Binding Path="IsChecked" ElementName="usePNGEncoder"/>
+                        </MultiBinding>
+                    </ui:BetterCheckbox.IsEnabled>
+                </ui:BetterCheckbox>
             </DockPanel>
         </StackPanel>
     </Grid>
