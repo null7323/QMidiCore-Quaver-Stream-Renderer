@@ -160,10 +160,10 @@ namespace QQS_UI.Core
             notew[127] = width - noteX[127];
 
             emptyFrame = (uint*)UnsafeMemory.Allocate(frameSize);
-            uint fillInColor = options.TransparentBackground ? 0x00000000 : 0xFF000000;
+            uint backgroundColor = options.TransparentBackground ? 0x00000000 : 0xFF000000;
             for (uint i = 0, loop = (uint)frameSize / 4; i != loop; ++i)
             {
-                frame[i] = fillInColor;
+                frame[i] = backgroundColor;
             }
             UnsafeMemory.Copy(emptyFrame, frame, frameSize);
             fixed (bool* kp = KeyPressed)
