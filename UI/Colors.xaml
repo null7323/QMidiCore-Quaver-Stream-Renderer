@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:QQS_UI.UI"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
+                    xmlns:media="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <media:Color x:Key="PrimaryColor" >#0E8DB2</media:Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+
+    <FontFamily x:Key="Font">Microsoft Yahei Light</FontFamily>
+</ResourceDictionary>
