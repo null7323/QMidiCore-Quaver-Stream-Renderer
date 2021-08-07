@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.0.4" Height="540" Width="960" Background="#FFFFFF">
+        Title="QMidiCore Quaver Stream Renderer 1.0.5" Height="540" Width="960" Background="#FFFFFF">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -71,8 +71,7 @@
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
                 <Label Content="音符速度: " HorizontalAlignment="Left" Width="150"/>
-                <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="200" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRendering}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
-                
+                <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="225" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRendering}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
                 <Label Content="渲染分辨率: " HorizontalAlignment="Left" Width="150"/>
@@ -96,10 +95,11 @@
                 <ui:BetterCheckbox x:Name="usePNGEncoder" Text="使用 PNG 编码器" Margin="5,0,0,0" IsChecked="False" CheckToggled="usePNGEncoder_CheckToggled" IsEnabled="{DynamicResource notRendering}"/>
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
-                <Button Content="开始渲染" Width="260" Margin="0,20,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="startRender" Click="startRender_Click" HorizontalAlignment="Left"/>
+                <Button Content="开始渲染" Width="130" Margin="0,20,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="startRender" Click="startRender_Click" HorizontalAlignment="Left"/>
+                <Button Content="开始预览" Width="130" Margin="10,20,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="startPreview" Click="startPreview_Click" HorizontalAlignment="Left"/>
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
-                <Button Content="停止" Width="260" Margin="0,0,0,0" IsEnabled="{Binding ElementName=startRender, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
+                <Button Content="停止" Width="270" Margin="0,0,0,0" IsEnabled="{Binding ElementName=startRender, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
                 <ui:BetterCheckbox Text="透明视频背景" IsChecked="False" Margin="5,0,0,0" x:Name="enableTranparentBackground" CheckToggled="enableTranparentBackground_CheckToggled">
                     <ui:BetterCheckbox.IsEnabled>
                         <MultiBinding Converter="{StaticResource AndValueConverter}">

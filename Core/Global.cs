@@ -26,7 +26,7 @@ namespace QQS_UI.Core
             85, 87, 90, 92, 94, 97, 99, 102, 104, 106, 109, 111, 114, 116,
             118, 121, 123, 126
         };
-        public static uint[] Color = {
+        public static RGBAColor[] Color = {
             0xFF3366FF, 0xFFFF7E33, 0xFF33FF66, 0xFFFF3381, 0xFF33E1E1, 0xFFE433E1,
             0xFF99E133, 0xFF4B33E1, 0xFFFFCC33, 0xFF33B4FF, 0xFFFF3333, 0xFF33FFB1,
             0xFFFF33CC, 0xFF4EFF33, 0xFF9933FF, 0xFFE7FF33, 0xFF3366FF, 0xFFFF7E33,
@@ -44,6 +44,14 @@ namespace QQS_UI.Core
             0xFF33E1E1, 0xFFE433E1, 0xFF99E133, 0xFF4B33E1, 0xFFFFCC33, 0xFF33B4FF,
             0xFFFF3333, 0xFF33FFB1, 0xFFFF33CC, 0xFF4EFF33, 0xFF9933FF, 0xFFE7FF33
         };
+        public static uint[] ColorHSV = new uint[96];
+        static Global()
+        {
+            for (int i = 0; i != 96; ++i)
+            {
+                Color[i].A = 0x80;
+            }
+        }
         public static TimeSpan GetTimeOf(uint midiTime, ushort ppq, UnmanagedList<Tempo> tempos)
         {
             if (tempos == null)

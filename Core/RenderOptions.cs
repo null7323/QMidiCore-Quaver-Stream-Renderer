@@ -20,6 +20,8 @@ namespace QQS_UI.Core
         public bool TickBased;
         public bool PNGEncoder;
         public bool TransparentBackground;
+        public bool Horizontal;
+        public bool NoOutputFile;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RenderOptions CreateRenderOptions()
         {
@@ -34,7 +36,9 @@ namespace QQS_UI.Core
                 LineColor = 0xFF000080,
                 TickBased = true,
                 PNGEncoder = false,
-                TransparentBackground = false
+                TransparentBackground = false,
+                Horizontal = false,
+                NoOutputFile = false
             };
         }
     }

@@ -28,7 +28,7 @@ namespace QQS_UI
         private RenderFile file = null;
         private bool isLoading = false;
         private Core.RenderOptions options = Core.RenderOptions.CreateRenderOptions();
-        private Renderer renderer = null;
+        private CommonRenderer renderer = null;
         private readonly Config config;
         private const string DefaultVideoFilter = "视频 (*.mp4, *.avi, *.mov)|*.mp4;*.avi;*.mov",
             PNGVideoFilter = "视频 (*.mp4, *.mov)|*.mp4, *.mov",
@@ -192,8 +192,9 @@ namespace QQS_UI
             }
             options.Input = midiPath.Text;
             options.Output = outputPath.Text;
+            options.NoOutputFile = false;
             Resources["notRendering"] = false;
-            renderer = new Renderer(file, options);
+            renderer = new CommonRenderer(file, options);
             _ = Task.Run(() =>
             {
                 Console.WriteLine("准备渲染...");
@@ -231,6 +232,37 @@ namespace QQS_UI
                     outputPath.Text = outputPath.Text.Substring(0, outputPath.Text.Length - 4) + ".mov";
                 }
             }
+        }
+
+        private void startPreview_Click(object sender, RoutedEventArgs e)
+        {
+            if (file == null)
+            {
+                _ = MessageBox.Show("无法进行预览: \nMidi 文件为空. 请检查是否加载了 Midi 文件.", "无 Midi 文件");
+                return;
+            }
+            if (usePNGEncoder.IsChecked)
+            {
+                _ = MessageBox.Show("无法进行预览: \n不支持使用 PNG 序列进行预览.", "无法预览");
+                return;
+            }
+            options.Input = midiPath.Text;
+            options.Output = outputPath.Text;
+            options.NoOutputFile = true;
+            Resources["notRendering"] = false;
+            renderer = new CommonRenderer(file, options);
+            _ = Task.Run(() =>
+            {
+                Console.WriteLine("准备预览...");
+                renderer.Render();
+                int gen = GC.GetGeneration(renderer);
+                Dispatcher.Invoke(() =>
+                {
+                    renderer = null;
+                    Resources["notRendering"] = true;
+                });
+                GC.Collect(gen);
+            });
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
