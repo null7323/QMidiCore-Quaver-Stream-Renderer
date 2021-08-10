@@ -80,7 +80,7 @@ namespace QQS_UI.Core
                     {
                         if (noteptr->End >= tick)
                         {
-                            l = Global.Color[noteptr->Track % 96];
+                            l = Global.Colors[noteptr->Track % Global.Colors.Length];
                             if (!flag && (flag = true))
                             {
                                 noteBegins[i] = noteptr;
@@ -113,7 +113,7 @@ namespace QQS_UI.Core
                 });
                 canvas.DrawKeys();
                 canvas.WriteFrame();
-                if (isPreview)
+                if (isPreview && Global.LimitPreviewFPS)
                 {
                     while (frameWatch.ElapsedTicks < frameLen)
                     {

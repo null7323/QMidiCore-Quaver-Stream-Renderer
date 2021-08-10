@@ -12,17 +12,6 @@ using SharpExtension.Collections;
 
 namespace QQS_UI.Core
 {
-    public struct Note
-    {
-        public byte Key;
-        public ushort Track;
-        public uint Start, End;
-    }
-    public struct Tempo
-    {
-        public uint Tick;
-        public uint Value;
-    }
     public unsafe class MidiStream : IDisposable
     {
         private readonly CStream stream;
@@ -278,11 +267,14 @@ namespace QQS_UI.Core
                             byte b1 = *p++;
                             byte b2 = *p++;
                             uint t = (uint)((b1 << 16) | (b2 << 8) | (*p++));
-                            Tempos.Add(new Tempo
+                            lock (Tempos)
                             {
-                                Tick = trkTime,
-                                Value = t
-                            });
+                                Tempos.Add(new Tempo
+                                {
+                                    Tick = trkTime,
+                                    Value = t
+                                });
+                            }
                             break;
                         default:
                             uint dl = ParseVLInt(ref p); // 这个中间变量不可以去掉
@@ -323,6 +315,18 @@ namespace QQS_UI.Core
                 nl.TrimExcess();
                 NoteSorter.Sort(nl);
             });
+
+            // sort tempos
+            Tempo[] temp = Tempos.ToManaged();
+            Array.Sort(temp, (left, right) =>
+            {
+                return left.Tick < right.Tick ? -1 : left.Tick == right.Tick ? 0 : 1;
+            });
+            UnmanagedArray<Tempo> arr = Interoperability.MakeUnmanagedArray(temp);
+            Tempos.Clear();
+            Tempos.AddRange(arr);
+            arr.Dispose();
+
             Console.WriteLine("Midi 事件处理完成. 音符总数: {0}.", NoteCount);
             stream.Dispose();
         }
@@ -338,5 +342,7 @@ namespace QQS_UI.Core
             sw.Stop();
             Console.WriteLine("加载 Midi 用时: {0:F2} s.", sw.ElapsedMilliseconds / 1000.0);
         }
+
+        public string MidiPath => midiPath;
     }
 }

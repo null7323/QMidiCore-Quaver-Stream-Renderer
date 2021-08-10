@@ -36,7 +36,7 @@ namespace QQS_UI.Core
             height = (uint)options.Height;
             keyHeight = (uint)options.KeyHeight;
             isTickBased = options.TickBased;
-            isPreview = options.NoOutputFile;
+            isPreview = options.PreviewMode;
 
             Console.WriteLine("正在对 Midi 文件进行 OR 处理.");
             _ = Parallel.For(0, 128, (i) =>

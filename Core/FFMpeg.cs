@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SharpExtension.IO;
@@ -31,7 +32,8 @@ namespace QQS_UI.Core
         /// 向 FFMpeg 写入一帧.
         /// </summary>
         /// <param name="buffer">存有视频画面的缓冲区.</param>
-        public void WriteFrame(void* buffer)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteFrame(in void* buffer)
         {
             _ = stream.WriteWithoutLock(buffer, frameSize, 1);
         }

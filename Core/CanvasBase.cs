@@ -59,11 +59,11 @@ namespace QQS_UI.Core
 
             StringBuilder ffargs = new StringBuilder();
             _ = ffargs.Append("-y -hide_banner -f rawvideo -pix_fmt rgba -s ").Append(width).Append('x')
-                .Append(height).Append(" -r ").Append(fps).Append(" -i - -preset ultrafast ");
-            // if png encoder is requested, append '-vcodec png' to specify the encoder; otherwise append pixel format.
-            _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p");
-            _ = ffargs.Append(" -crf ").Append(crf);
-            _ = !options.NoOutputFile ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl preview");
+                .Append(height).Append(" -r ").Append(fps).Append(" -i - ");
+            // if png encoder is required, append '-vcodec png' to specify the encoder; otherwise append pixel format.
+            _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p -crf ").Append(crf).Append(" -preset ultrafast");
+            _ = ffargs.Append(' ').Append(options.AdditionalFFMpegArgument);
+            _ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
             pipe = new FFMpeg(ffargs.ToString(), width, height);
 
             frame = (uint*)UnsafeMemory.Allocate(frameSize + ((uint)width * 4ul));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using SharpExtension;
 using SharpExtension.Collections;
 
 namespace QQS_UI.Core
@@ -11,7 +12,7 @@ namespace QQS_UI.Core
     /// <summary>
     /// 对音符序列进行排序. 这是.NET BCL中Array.Sort对于<see cref="UnmanagedList{Note}"/>的特化版本.
     /// </summary>
-    public static class NoteSorter
+    public static unsafe class NoteSorter
     {
         // 实现: https://referencesource.microsoft.com/#q=GenericArraySortHelper<T>.IntroSort"
 
@@ -19,9 +20,8 @@ namespace QQS_UI.Core
         /// 获取递归的深度.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static long GetRecursionDepth(UnmanagedList<Note> collection)
+        private static long GetRecursionDepth(long len)
         {
-            long len = collection.Count;
             long res = 0;
             while (len >= 1)
             {
@@ -34,7 +34,7 @@ namespace QQS_UI.Core
         /// 如果 a处元素 > b处元素, 进行交换
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void SwapIfGreater(UnmanagedList<Note> collection, in long a, in long b)
+        private static void SwapIfGreater(Note* collection, in long a, in long b)
         {
             if (a != b)
             {
@@ -56,7 +56,13 @@ namespace QQS_UI.Core
             return left.Start < right.Start || (left.Track < right.Track && left.Start == right.Start);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void InsertionSort(UnmanagedList<Note> collection, in long low, in long high)
+        public static bool Compare(in PreviewEvent left, in PreviewEvent right)
+        {
+            // 如果符合以下条件 (返回true), 那么 left < right, 也就是 left 应该排在 right 的前面.
+            return left.Time < right.Time;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void InsertionSort(Note* collection, in long low, in long high)
         {
             long i, j;
             Note t;
@@ -77,7 +83,7 @@ namespace QQS_UI.Core
         /// <summary>
         /// 内省排序.
         /// </summary>
-        private static void IntroSort(UnmanagedList<Note> collection, in long low, long high, long depth)
+        private static void IntroSort(Note* collection, in long low, long high, long depth)
         {
             while (high > low)
             {
@@ -114,7 +120,7 @@ namespace QQS_UI.Core
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void DownHeap(UnmanagedList<Note> collection, long i, in long n, in long low)
+        private static void DownHeap(Note* collection, long i, in long n, in long low)
         {
             Note d = collection[low + i - 1];
             long child;
@@ -139,7 +145,7 @@ namespace QQS_UI.Core
         /// 堆排序.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void HeapSort(UnmanagedList<Note> collection, in long low, in long high)
+        private static void HeapSort(Note* collection, in long low, in long high)
         {
             long n = high - low + 1;
             for (long i = n / 2; i >= 1; --i)
@@ -163,10 +169,13 @@ namespace QQS_UI.Core
             {
                 return;
             }
-            IntroSort(collection, 0, collection.Count - 1, GetRecursionDepth(collection));
+            lock (collection)
+            {
+                IntroSort((Note*)UnsafeMemory.GetActualAddressOf(ref collection[0]), 0, collection.Count - 1, collection.Count);
+            }
         }
 
-        private static long PickPivotAndPartition(UnmanagedList<Note> collection, in long lo, in long hi)
+        private static long PickPivotAndPartition(Note* collection, in long lo, in long hi)
         {
             long mid = lo + (hi - lo) / 2;
             SwapIfGreater(collection, lo, mid);

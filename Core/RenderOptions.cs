@@ -17,11 +17,12 @@ namespace QQS_UI.Core
         public double NoteSpeed;
         public string Input;
         public string Output;
+        public string AdditionalFFMpegArgument;
         public bool TickBased;
         public bool PNGEncoder;
         public bool TransparentBackground;
         public bool Horizontal;
-        public bool NoOutputFile;
+        public bool PreviewMode;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RenderOptions CreateRenderOptions()
         {
@@ -38,7 +39,8 @@ namespace QQS_UI.Core
                 PNGEncoder = false,
                 TransparentBackground = false,
                 Horizontal = false,
-                NoOutputFile = false
+                PreviewMode = false,
+                AdditionalFFMpegArgument = string.Empty
             };
         }
     }
