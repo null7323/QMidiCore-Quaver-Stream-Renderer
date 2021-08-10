@@ -7,6 +7,7 @@ using System.Windows;
 using QQS_UI.Core;
 using SharpExtension.Collections;
 using SharpExtension;
+using System.IO;
 
 namespace QQS_UI
 {

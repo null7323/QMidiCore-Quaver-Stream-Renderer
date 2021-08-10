@@ -12,6 +12,7 @@ namespace QQS_UI
     {
         public string MidiDirectory;
         public string VideoDirectory;
+        public string ColorDirectory;
     }
     /// <summary>
     /// 表示用于存储Midi文件夹路径和视频文件夹路径.
@@ -29,8 +30,16 @@ namespace QQS_UI
             ConfigName = configName;
             if (File.Exists(configName))
             {
-                string jsonData = File.ReadAllText(configName);
-                ConfigPath = JsonConvert.DeserializeObject<DialogPath>(jsonData);
+                try
+                {
+                    string jsonData = File.ReadAllText(configName);
+                    ConfigPath = JsonConvert.DeserializeObject<DialogPath>(jsonData);
+                }
+                catch
+                {
+                    File.Create(ConfigName).Close();
+                    ConfigPath = new DialogPath();
+                }
             }
             else
             {
@@ -38,23 +47,22 @@ namespace QQS_UI
                 ConfigPath = new DialogPath();
             }
         }
-        public string GetCachedMidiDirectory()
+        public string CachedVideoDirectory
         {
-            return ConfigPath.MidiDirectory;
-        }
-        public string GetCachedVideoDirectory()
-        {
-            return ConfigPath.VideoDirectory;
+            get => ConfigPath.VideoDirectory;
+            set => ConfigPath.VideoDirectory = value;
         }
 
-        public void SetCachedMidiDirectory(string path)
+        public string CachedColorDirectory
         {
-            ConfigPath.MidiDirectory = path;
+            get => ConfigPath.ColorDirectory;
+            set => ConfigPath.ColorDirectory = value;
         }
 
-        public void SetCachedVideoDirectory(string path)
+        public string CachedMIDIDirectory
         {
-            ConfigPath.VideoDirectory = path;
+            get => ConfigPath.MidiDirectory;
+            set => ConfigPath.MidiDirectory = value;
         }
 
         public void SaveConfig()
