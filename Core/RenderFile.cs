@@ -84,20 +84,6 @@ namespace QQS_UI.Core
         public long NoteCount = 0;
         public UnmanagedList<Note>[] Notes = new UnmanagedList<Note>[128];
         public UnmanagedList<Tempo> Tempos = new UnmanagedList<Tempo>();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static uint ParseVLInt(ref byte* p)
-        {
-            uint result = 0;
-            uint b;
-            do
-            {
-                b = *p++;
-                result = (result << 7) | (b & 0x7F);
-            }
-            while ((b & 0b10000000) != 0);
-            return result;
-        }
         private void Parse()
         {
             MidiStream stream = new MidiStream(midiPath);
@@ -163,7 +149,7 @@ namespace QQS_UI.Core
                 byte comm;
                 while (loop)
                 {
-                    trkTime += ParseVLInt(ref p);
+                    trkTime += Global.ParseVLInt(ref p);
                     comm = *p++;
                     if (comm < 0x80)
                     {
@@ -245,7 +231,7 @@ namespace QQS_UI.Core
                     comm = *p++;
                     if (comm >= 0 && comm <= 0x0A)
                     {
-                        uint l = ParseVLInt(ref p); // 这个中间变量不可以去掉
+                        uint l = Global.ParseVLInt(ref p); // 这个中间变量不可以去掉
                         p += l;
                         continue;
                     }
@@ -263,7 +249,7 @@ namespace QQS_UI.Core
                             loop = false;
                             break;
                         case 0x51:
-                            _ = ParseVLInt(ref p);
+                            _ = Global.ParseVLInt(ref p);
                             byte b1 = *p++;
                             byte b2 = *p++;
                             uint t = (uint)((b1 << 16) | (b2 << 8) | (*p++));
@@ -277,7 +263,7 @@ namespace QQS_UI.Core
                             }
                             break;
                         default:
-                            uint dl = ParseVLInt(ref p); // 这个中间变量不可以去掉
+                            uint dl = Global.ParseVLInt(ref p); // 这个中间变量不可以去掉
                             p += dl;
                             break;
                     }

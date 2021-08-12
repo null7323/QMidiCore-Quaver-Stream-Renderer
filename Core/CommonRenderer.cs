@@ -11,9 +11,10 @@ namespace QQS_UI.Core
 {
     public class CommonRenderer : RendererBase
     {
+        private readonly CommonCanvas canvas;
         public CommonRenderer(RenderFile file, in RenderOptions options) : base(file, options)
         {
-
+            canvas = new CommonCanvas(options);
         }
 
         public override void Render()
@@ -26,6 +27,10 @@ namespace QQS_UI.Core
             // Pixels per beat.
             // eval "spd":
             // spd = 1000000.0 * ppq / [tempo] / fps
+
+            Global.CurrentRenderTick = 0;
+            Global.RealtimeFPS = 0;
+            Global.RenderedFrameCount = 0;
 
             double ppb = 520.0 / ppq * noteSpeed;
             double fileTick = renderFile.MidiTime;
@@ -55,6 +60,7 @@ namespace QQS_UI.Core
             }
             for (; tick < fileTick; tick += spd)
             {
+                Global.CurrentRenderTick = tick;
                 frameWatch.Restart();
                 canvas.Clear();
                 tickup = tick + deltaTicks;
@@ -78,6 +84,10 @@ namespace QQS_UI.Core
                     Note* noteptr = noteBegins[i];
                     while (noteptr->Start < tickup)
                     {
+                        if (noteptr == end[i])
+                        {
+                            break;
+                        }
                         if (noteptr->End >= tick)
                         {
                             l = Global.Colors[noteptr->Track % Global.Colors.Length];
@@ -85,7 +95,6 @@ namespace QQS_UI.Core
                             {
                                 noteBegins[i] = noteptr;
                             }
-
                             if (noteptr->Start < tick)
                             {
                                 k = keyHeight;
@@ -104,10 +113,6 @@ namespace QQS_UI.Core
                             }
                             canvas.DrawNote((short)i, (int)k, (int)j, l); // each key is individual
                         }
-                        if (noteptr == end[i])
-                        {
-                            break;
-                        }
                         ++noteptr;
                     }
                 });
@@ -120,10 +125,12 @@ namespace QQS_UI.Core
 
                     }
                 }
+                Global.RealtimeFPS = 10000000 / frameWatch.ElapsedTicks;
+                ++Global.RenderedFrameCount;
             }
             canvas.Clear();
             canvas.DrawKeys();
-            for (int i = 0; i != 300; i++)
+            for (int i = 0; i != 3 * fps; i++)
             {
                 if (Interrupt)
                 {

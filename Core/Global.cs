@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SharpExtension.Collections;
@@ -80,7 +81,25 @@ namespace QQS_UI.Core
             return new TimeSpan((long)ticks);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static uint ParseVLInt(ref byte* p)
+        {
+            uint result = 0;
+            uint b;
+            do
+            {
+                b = *p++;
+                result = (result << 7) | (b & 0x7F);
+            }
+            while ((b & 0b10000000) != 0);
+            return result;
+        }
+
         public static bool LimitPreviewFPS = true;
+
+        public static double CurrentRenderTick = 0;
+        public static double RealtimeFPS = 0;
+        public static double RenderedFrameCount = 0;
     }
 
     public struct Note
