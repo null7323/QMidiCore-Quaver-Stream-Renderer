@@ -17,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using QQS_UI.Core;
 using Path = System.IO.Path;
+using System.Diagnostics;
+using System.Threading;
 
 namespace QQS_UI
 {
@@ -59,6 +61,9 @@ namespace QQS_UI
                 B = (byte)((options.LineColor & 0xff0000) >> 16),
                 A = 0xff
             });
+#if DEBUG
+            Title += " (Debug)";
+#endif
         }
 
         private void openMidi_Click(object sender, RoutedEventArgs e)
@@ -205,6 +210,7 @@ namespace QQS_UI
             _ = Task.Run(() =>
             {
                 Console.WriteLine("准备渲染...");
+                //_ = Task.Run(RenderProgressCallback);
                 renderer.Render();
                 int gen = GC.GetGeneration(renderer);
                 Dispatcher.Invoke(() =>
@@ -241,6 +247,34 @@ namespace QQS_UI
             }
         }
 
+        //private void RenderProgressCallback()
+        //{
+        //    Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+        //    Stopwatch totalTime = Stopwatch.StartNew();
+        //    TimeSpan span;
+        //    while (!(bool)Resources["notRenderingOrPreviewing"])
+        //    {
+        //        span = Global.GetTimeOf((uint)Global.CurrentRenderTick, file.Division, file.Tempos);
+        //        double rtfps = Math.Round(Global.RealtimeFPS, 3);
+        //        double avgfps = Math.Round(Global.RenderedFrameCount * 1000.0 / totalTime.ElapsedMilliseconds, 3);
+        //        Dispatcher.Invoke(() =>
+        //        {
+        //            currentMidiTime.Content = span.ToString("mm\\:ss\\.fff");
+        //            percentage.Content = Math.Round(Global.CurrentRenderTick * 100 / file.MidiTime, 3).ToString();
+        //            realtimeFPS.Content = $"{rtfps} ({Math.Round(rtfps / options.FPS, 3)}x)";
+        //            avgFPS.Content = $"{avgfps} ({Math.Round(avgfps / options.FPS, 3)}x)";
+        //        });
+        //        _ = SpinWait.SpinUntil(() => false, 20);
+        //    }
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        currentMidiTime.Content = "--:--.---";
+        //        percentage.Content = "0.0";
+        //        realtimeFPS.Content = "0.0 (0.000x)";
+        //        avgFPS.Content = "0.0 (0.000x)";
+        //    });
+        //}
+
         private void startPreview_Click(object sender, RoutedEventArgs e)
         {
             if (file == null)
@@ -262,6 +296,7 @@ namespace QQS_UI
             _ = Task.Run(() =>
             {
                 Console.WriteLine("准备预览...");
+                //_ = Task.Run(RenderProgressCallback);
                 renderer.Render();
                 int gen = GC.GetGeneration(renderer);
                 Dispatcher.Invoke(() =>

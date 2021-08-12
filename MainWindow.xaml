@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.1.0" Height="540" Width="960" Background="#FFFFFF">
+        Title="QMidiCore Quaver Stream Renderer 1.1.1" Height="540" Width="960" Background="#FFFFFF">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,7 +24,7 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="10">
-        <TabControl Style="{StaticResource SubTabs}">
+        <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left">
             <TabItem Header="MIDI" Style="{StaticResource SubTabItems}">
                 <Grid>
                     <Grid Name="midiLoaded" IsEnabled="{DynamicResource midiLoaded}"/>
@@ -132,6 +132,31 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <!--<TabItem Header="渲染进度" HorizontalAlignment="Right" Style="{StaticResource SubTabItems}">
+                <Grid Margin="0,15,0,0">
+                    <StackPanel>
+                        <Label Content="当前渲染进度" FontSize="20"/>
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <Label Content="实时 FPS:" Width="120" HorizontalAlignment="Left" FontSize="16"/>
+                            <Label Content="0.0 (0.000x)" Width="170" HorizontalAlignment="Left" x:Name="realtimeFPS" FontSize="16"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <Label Content="MIDI 时间:" Width="120" HorizontalAlignment="Left" FontSize="16"/>
+                            <Label Content="" Width="100" HorizontalAlignment="Left" x:Name="currentMidiTime" FontSize="16"/>
+                            <Label Content="/" Width="50" FontSize="16"/>
+                            <Label Content="{Binding ElementName=midiLen, Path=Content}" Width="100" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <Label Content="平均 FPS:" Width="120" HorizontalAlignment="Left" FontSize="16"/>
+                            <Label Content="0.0 (0.000x)" Width="170" HorizontalAlignment="Left" x:Name="avgFPS" FontSize="16"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <Label Content="进度: (%)" Width="120" HorizontalAlignment="Left" FontSize="16"/>
+                            <Label Content="0.0" Width="170" HorizontalAlignment="Left" x:Name="percentage" FontSize="16"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem> -->
         </TabControl>
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <DockPanel Margin="0,10,0,0">
