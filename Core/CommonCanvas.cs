@@ -123,13 +123,29 @@ namespace QQS_UI.Core
             {
                 --h;
             }
-
-            if (h < 1)
+            else if (h < 1)
             {
                 h = 1;
             }
+
             //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
-            FillRectangle(noteX[k] + 1, y, notew[k] - 1, h, c);
+
+            if (h >= 3) // 如果高度足够, 加框
+            {
+                FillRectangle(noteX[k] + 1, y + 1, notew[k] - 1, h - 1, c);
+                DrawRectangle(noteX[k], y, notew[k] + 1, h, 0xFF000000); // 绘制音符边框. 感谢 Tweak 对此的贡献.
+            }
+            else
+            {
+                FillRectangle(noteX[k] + 1, y, notew[k] - 1, h, c);
+                int x = noteX[k];
+                int xend = x + notew[k];
+                for (int yend = y + h; y != yend; ++y)
+                {
+                    frameIdx[y][x] = 0xFF000000;
+                    frameIdx[y][xend] = 0xFF000000;
+                }
+            }
         }
     }
 }

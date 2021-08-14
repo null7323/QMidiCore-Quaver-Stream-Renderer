@@ -12,17 +12,18 @@ namespace QQS_UI.Core
     /// </summary>
     public struct RenderOptions
     {
-        public int Width, Height, FPS, CRF, KeyHeight;
-        public uint LineColor;
-        public double NoteSpeed;
-        public string Input;
-        public string Output;
-        public string AdditionalFFMpegArgument;
         public bool TickBased;
         public bool PNGEncoder;
         public bool TransparentBackground;
         public bool Horizontal;
         public bool PreviewMode;
+        public int Width, Height, FPS, CRF, KeyHeight;
+        public RGBAColor DivideBarColor;
+        public RGBAColor BackgroundColor;
+        public double NoteSpeed;
+        public string Input;
+        public string Output;
+        public string AdditionalFFMpegArgument;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RenderOptions CreateRenderOptions()
         {
@@ -34,13 +35,20 @@ namespace QQS_UI.Core
                 CRF = 17,
                 KeyHeight = 162,
                 NoteSpeed = 1,
-                LineColor = 0xFF000080,
+                DivideBarColor = 0xFF000080,
                 TickBased = true,
                 PNGEncoder = false,
                 TransparentBackground = false,
                 Horizontal = false,
                 PreviewMode = false,
-                AdditionalFFMpegArgument = string.Empty
+                AdditionalFFMpegArgument = string.Empty,
+                BackgroundColor = new RGBAColor
+                {
+                    A = 0xFF,
+                    G = 0,
+                    R = 0,
+                    B = 0
+                }
             };
         }
     }

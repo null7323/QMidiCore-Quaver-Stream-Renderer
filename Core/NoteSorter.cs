@@ -56,12 +56,6 @@ namespace QQS_UI.Core
             return left.Start < right.Start || (left.Track < right.Track && left.Start == right.Start);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Compare(in PreviewEvent left, in PreviewEvent right)
-        {
-            // 如果符合以下条件 (返回true), 那么 left < right, 也就是 left 应该排在 right 的前面.
-            return left.Time < right.Time;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void InsertionSort(Note* collection, in long low, in long high)
         {
             long i, j;

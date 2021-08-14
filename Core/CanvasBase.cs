@@ -54,7 +54,7 @@ namespace QQS_UI.Core
             fps = options.FPS;
             crf = options.CRF;
             keyh = options.KeyHeight;
-            lineColor = options.LineColor;
+            lineColor = options.DivideBarColor;
             frameSize = (ulong)width * (ulong)height * 4ul;
 
             StringBuilder ffargs = new StringBuilder();
@@ -75,7 +75,7 @@ namespace QQS_UI.Core
                 frameIdx[i] = frame + ((height - i - 1) * width);
             }
             emptyFrame = (uint*)UnsafeMemory.Allocate(frameSize);
-            uint backgroundColor = options.TransparentBackground ? 0x00000000 : 0xFF000000;
+            uint backgroundColor = options.TransparentBackground ? (options.BackgroundColor & 0x00FFFFFF) : (uint)options.BackgroundColor;
             for (uint i = 0, loop = (uint)frameSize / 4; i != loop; ++i)
             {
                 frame[i] = backgroundColor;

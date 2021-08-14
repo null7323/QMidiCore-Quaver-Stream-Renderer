@@ -95,8 +95,8 @@ namespace QQS_UI.Core
             {
                 throw new Exception();
             }
-            uint trkSize = stream.ReadInt32();
-            if (trkSize != 6)
+            uint hdrSize = stream.ReadInt32();
+            if (hdrSize != 6)
             {
                 throw new Exception();
             }
