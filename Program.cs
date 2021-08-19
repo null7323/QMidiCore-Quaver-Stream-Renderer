@@ -16,8 +16,20 @@ namespace QQS_UI
         [STAThread]
         private static void Main(string[] args)
         {
-            Application app = new Application();
-            _ = app.Run(new MainWindow());
+            Console.Title = "QMIDICore Quaver Stream Renderer";
+#if !DEBUG
+            try
+            {
+#endif
+                Application app = new Application();
+                _ = app.Run(new MainWindow());
+#if !DEBUG
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred:\n{ex.Message}\nStack Trace:\n{ex.StackTrace}");
+            }
+#endif
         }
     }
 }

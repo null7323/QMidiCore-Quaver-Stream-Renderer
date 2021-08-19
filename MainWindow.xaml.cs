@@ -400,6 +400,11 @@ namespace QQS_UI
             }
         }
 
+        private void drawGreySquare_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.DrawGreySquare = e.NewValue;
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;

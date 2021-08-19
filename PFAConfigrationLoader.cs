@@ -21,8 +21,22 @@ namespace QQS_UI
             }
         }
 
+        /// <summary>
+        /// 判断PFA配置文件是否可用.<br/>
+        /// Determines whether PFA configuration is available.
+        /// </summary>
         public static bool IsConfigurationAvailable => ConfigurationPath != null;
 
+        /// <summary>
+        /// 加载 PFA Config的颜色.<br/>
+        /// Load colors from PFA configuration if possible.
+        /// </summary>
+        /// <returns>
+        /// 如果无法加载配置, 返回<see langword="null"/>;<br/>
+        /// 如果加载成功, 则以数组的形式返回这些颜色.<br/>
+        /// If it fails to load PFA configuration, <see langword="null"/> will be returned.<br/>
+        /// If it succeeds in loading config, then an array containing these colors will be returned.
+        /// </returns>
         public static RGBAColor[] LoadPFAConfigurationColors()
         {
             if (!IsConfigurationAvailable)

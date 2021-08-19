@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.1.2" Height="540" Width="960" Background="#FFFFFF">
+        Title="QMidiCore Quaver Stream Renderer 1.1.3" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,127 +24,131 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="10">
-        <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left">
-            <TabItem Header="MIDI" Style="{StaticResource SubTabItems}">
-                <Grid>
-                    <Grid Name="midiLoaded" IsEnabled="{DynamicResource midiLoaded}"/>
-                    <Grid Name="notRenderingOrPreviewing" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                    <Grid Name="loadable">
-                        <Grid.IsEnabled>
-                            <MultiBinding Converter="{StaticResource AndValueConverter}">
-                                <Binding Path="IsEnabled" ElementName="midiLoaded" Converter="{StaticResource NotValueConverter}"/>
-                                <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
-                            </MultiBinding>
-                        </Grid.IsEnabled>
-                    </Grid>
-                    <StackPanel Margin="0">
-                        <Label Content="Midi" FontSize="20" Margin="0,15,0,0"/>
-                        <DockPanel Margin="0,10,0,0">
-                            <Button Content="浏览" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding ElementName=loadable, Path=IsEnabled}" x:Name="openMidi" Click="openMidi_Click"/>
-                            <TextBox Text="Input.mid" IsReadOnly="True" Width="550" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="midiPath"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Button Content="加载" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding ElementName=loadable, Path=IsEnabled}" x:Name="loadButton" Click="loadButton_Click"/>
-                            <Button Content="卸载" HorizontalAlignment="Left" Width="100" Margin="15,0,0,0" x:Name="unloadButton" Click="unloadButton_Click">
-                                <Button.IsEnabled>
-                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
-                                        <Binding ElementName="startRender" Path="IsEnabled"/>
-                                        <Binding ElementName="midiLoaded" Path="IsEnabled"/>
-                                    </MultiBinding>
-                                </Button.IsEnabled>
-                            </Button>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="音符总数:" HorizontalAlignment="Left"/>
-                            <Label Content="-" Width="150" HorizontalAlignment="Left" Margin="5,0,0,0" x:Name="noteCount"/>
-                            <Label Content="音轨数: " HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                            <Label Content="-" Width="150" HorizontalAlignment="Left" Margin="5,0,0,0" x:Name="trackCount"/>
-                            <Label Content="Midi 时长: " HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                            <Label Content="--:--.---" HorizontalAlignment="Left" Width="150" x:Name="midiLen"/>
-                        </DockPanel>
+        <DockPanel>
+            <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left">
+                <TabItem Header="MIDI" Style="{StaticResource SubTabItems}">
+                    <Grid>
+                        <Grid Name="midiLoaded" IsEnabled="{DynamicResource midiLoaded}"/>
+                        <Grid Name="notRenderingOrPreviewing" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                        <Grid Name="loadable">
+                            <Grid.IsEnabled>
+                                <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                    <Binding Path="IsEnabled" ElementName="midiLoaded" Converter="{StaticResource NotValueConverter}"/>
+                                    <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                </MultiBinding>
+                            </Grid.IsEnabled>
+                        </Grid>
+                        <StackPanel Margin="0">
+                            <Label Content="Midi" FontSize="20" Margin="0,15,0,0"/>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button Content="浏览" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding ElementName=loadable, Path=IsEnabled}" x:Name="openMidi" Click="openMidi_Click"/>
+                                <TextBox Text="Input.mid" IsReadOnly="True" Width="550" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="midiPath"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button Content="加载" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding ElementName=loadable, Path=IsEnabled}" x:Name="loadButton" Click="loadButton_Click"/>
+                                <Button Content="卸载" HorizontalAlignment="Left" Width="100" Margin="15,0,0,0" x:Name="unloadButton" Click="unloadButton_Click">
+                                    <Button.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                            <Binding ElementName="startRender" Path="IsEnabled"/>
+                                            <Binding ElementName="midiLoaded" Path="IsEnabled"/>
+                                        </MultiBinding>
+                                    </Button.IsEnabled>
+                                </Button>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="音符总数:" HorizontalAlignment="Left"/>
+                                <Label Content="-" Width="150" HorizontalAlignment="Left" Margin="5,0,0,0" x:Name="noteCount"/>
+                                <Label Content="音轨数: " HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                                <Label Content="-" Width="150" HorizontalAlignment="Left" Margin="5,0,0,0" x:Name="trackCount"/>
+                                <Label Content="Midi 时长: " HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                                <Label Content="--:--.---" HorizontalAlignment="Left" Width="150" x:Name="midiLen"/>
+                            </DockPanel>
 
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="渲染设置" Style="{StaticResource SubTabItems}">
-                <Grid>
-                    <StackPanel>
-                        <Label Content="渲染" Margin="0,15,0,0" FontSize="20"/>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="FPS:" HorizontalAlignment="Left" Width="150"/>
-                            <ComboBox x:Name="fpsBox" SelectedIndex="1" VerticalContentAlignment="Center" Background="#FEFEFE" HorizontalAlignment="Left" Width="150" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="fpsBox_SelectionChanged">
-                                <ComboBoxItem Content="30"/>
-                                <ComboBoxItem Content="60"/>
-                                <ComboBoxItem Content="120"/>
-                                <ComboBoxItem Content="240"/>
-                            </ComboBox>
-                            <Label Content="CRF: " HorizontalAlignment="Left" Width="150" Margin="75,0,0,0"/>
-                            <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="80" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="音符速度: " HorizontalAlignment="Left" Width="150"/>
-                            <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="210" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="渲染分辨率: " HorizontalAlignment="Left" Width="150"/>
-                            <ComboBox x:Name="renderResolution" SelectedIndex="2" Width="180" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsEditable="False" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="renderResolution_SelectionChanged">
-                                <ComboBoxItem Content="480p (640x480, 4:3)"/>
-                                <ComboBoxItem Content="720p (1280x720, 16:9)"/>
-                                <ComboBoxItem Content="1080p (1920x1080, 16:9)"/>
-                                <ComboBoxItem Content="1440p (2560x1440, 16:9)"/>
-                                <ComboBoxItem Content="2160p (3840x2160, 16:9)"/>
-                            </ComboBox>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="输出路径: " Width="150" HorizontalAlignment="Left"/>
-                            <TextBox x:Name="outputPath" Text="Output.mp4" Margin="0,0,0,0" Width="420" HorizontalAlignment="Left" IsReadOnly="True"/>
-                            <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="selectOutput" Click="selectOutput_Click"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="FFMpeg 附加参数:" Width="150"/>
-                            <TextBox Text="" Width="420" x:Name="additionalFFArgs" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                            <ui:BetterCheckbox x:Name="usePNGEncoder" Text="使用 PNG 编码器" Margin="5,0,0,0" IsChecked="False" CheckToggled="usePNGEncoder_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" HorizontalAlignment="Left" Width="150"/>
-                        </DockPanel>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="颜色" Style="{StaticResource SubTabItems}">
-                <Grid>
-                    <StackPanel Margin="0,15,0,0">
-                        <Label Content="颜色" FontSize="20"/>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="当前颜色文件路径:" Width="150" HorizontalAlignment="Left"/>
-                            <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorPath" IsReadOnly="True"/>
-                            <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openColorFile" Click="openColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRendering}" x:Name="loadPFAColors" Click="loadPFAColors_Click"/>
-                            <Button Content="加载颜色文件" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRendering}" x:Name="loadColors" Click="loadColors_Click" Margin="15,0,0,0"/>
-                            <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="130" Margin="15,0,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
-                            <ui:BetterCheckbox Text="启用随机颜色" HorizontalAlignment="Left" Margin="5,0,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="enableRandomColor" CheckToggled="enableRandomColor_CheckToggled"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,15,0,0">
-                            <Label Content="分割条颜色 (RGB):" Margin="0,0,0,0" Width="150" HorizontalAlignment="Left"/>
-                            <Label Content="#"/>
-                            <TextBox Text="800000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="barColor"/>
-                            <Border Background="Black" Width="30" Margin="10,0,0,0">
-                                <Canvas x:Name="previewColor" Margin="1,0,1,0"/>
-                            </Border>
-                            <Button Content="设置" HorizontalAlignment="Left" Width="120" Margin="10,0,0,0" x:Name="setBarColor" Click="setBarColor_Click" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="背景颜色 (RGB):" Width="150" HorizontalAlignment="Left"/>
-                            <Label Content="#"/>
-                            <TextBox Text="000000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="bgColor"/>
-                            <Border Background="Black" Margin="10,0,0,0" Width="30">
-                                <Canvas x:Name="previewBackgroundColor" Margin="1,0,1,0"/>
-                            </Border>
-                            <Button Content="设置" HorizontalAlignment="Left" Width="120" Margin="10,0,0,0" x:Name="setbgColor" Click="setbgColor_Click" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                        </DockPanel>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-        </TabControl>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="渲染设置" Style="{StaticResource SubTabItems}">
+                    <Grid>
+                        <StackPanel>
+                            <Label Content="渲染" Margin="0,15,0,0" FontSize="20"/>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="FPS:" HorizontalAlignment="Left" Width="150"/>
+                                <ComboBox x:Name="fpsBox" SelectedIndex="1" VerticalContentAlignment="Center" Background="#FEFEFE" HorizontalAlignment="Left" Width="150" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="fpsBox_SelectionChanged">
+                                    <ComboBoxItem Content="30"/>
+                                    <ComboBoxItem Content="60"/>
+                                    <ComboBoxItem Content="120"/>
+                                    <ComboBoxItem Content="240"/>
+                                </ComboBox>
+                                <Label Content="CRF: " HorizontalAlignment="Left" Width="150" Margin="75,0,0,0"/>
+                                <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="80" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="音符速度: " HorizontalAlignment="Left" Width="150"/>
+                                <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="222" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
+                                <ui:BetterCheckbox Text="在中央 C 键绘制小正方形" Margin="3,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="False" x:Name="drawGreySquare" CheckToggled="drawGreySquare_CheckToggled"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="渲染分辨率: " HorizontalAlignment="Left" Width="150"/>
+                                <ComboBox x:Name="renderResolution" SelectedIndex="2" Width="180" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsEditable="False" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="renderResolution_SelectionChanged">
+                                    <ComboBoxItem Content="480p (640x480, 4:3)"/>
+                                    <ComboBoxItem Content="720p (1280x720, 16:9)"/>
+                                    <ComboBoxItem Content="1080p (1920x1080, 16:9)"/>
+                                    <ComboBoxItem Content="1440p (2560x1440, 16:9)"/>
+                                    <ComboBoxItem Content="2160p (3840x2160, 16:9)"/>
+                                </ComboBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="输出路径: " Width="150" HorizontalAlignment="Left"/>
+                                <TextBox x:Name="outputPath" Text="Output.mp4" Margin="0,0,0,0" Width="420" HorizontalAlignment="Left" IsReadOnly="True"/>
+                                <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="selectOutput" Click="selectOutput_Click"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="FFMpeg 附加参数:" Width="150"/>
+                                <TextBox Text="" Width="420" x:Name="additionalFFArgs" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                                <ui:BetterCheckbox x:Name="usePNGEncoder" Text="使用 PNG 编码器" Margin="5,0,0,0" IsChecked="False" CheckToggled="usePNGEncoder_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" HorizontalAlignment="Left" Width="150"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="颜色" Style="{StaticResource SubTabItems}">
+                    <Grid>
+                        <StackPanel Margin="0,15,0,0">
+                            <Label Content="颜色" FontSize="20"/>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="当前颜色文件路径:" Width="150" HorizontalAlignment="Left"/>
+                                <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorPath" IsReadOnly="True"/>
+                                <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openColorFile" Click="openColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRendering}" x:Name="loadPFAColors" Click="loadPFAColors_Click"/>
+                                <Button Content="加载颜色文件" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRendering}" x:Name="loadColors" Click="loadColors_Click" Margin="15,0,0,0"/>
+                                <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="130" Margin="15,0,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
+                                <ui:BetterCheckbox Text="启用随机颜色" HorizontalAlignment="Left" Margin="5,0,0,0" IsEnabled="{DynamicResource notRendering}" x:Name="enableRandomColor" CheckToggled="enableRandomColor_CheckToggled"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,15,0,0">
+                                <Label Content="分割条颜色 (RGB):" Margin="0,0,0,0" Width="150" HorizontalAlignment="Left"/>
+                                <Label Content="#"/>
+                                <TextBox Text="800000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="barColor"/>
+                                <Border Background="Black" Width="30" Margin="10,0,0,0">
+                                    <Canvas x:Name="previewColor" Margin="1,0,1,0"/>
+                                </Border>
+                                <Button Content="设置" HorizontalAlignment="Left" Width="120" Margin="10,0,0,0" x:Name="setBarColor" Click="setBarColor_Click" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="背景颜色 (RGB):" Width="150" HorizontalAlignment="Left"/>
+                                <Label Content="#"/>
+                                <TextBox Text="000000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="bgColor"/>
+                                <Border Background="Black" Margin="10,0,0,0" Width="30">
+                                    <Canvas x:Name="previewBackgroundColor" Margin="1,0,1,0"/>
+                                </Border>
+                                <Button Content="设置" HorizontalAlignment="Left" Width="120" Margin="10,0,0,0" x:Name="setbgColor" Click="setbgColor_Click" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            
+        </DockPanel>
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <DockPanel Margin="0,10,0,0">
                 <Button Content="开始渲染" Width="130" Margin="0,20,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="startRender" Click="startRender_Click" HorizontalAlignment="Left"/>

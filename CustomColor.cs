@@ -68,15 +68,20 @@ namespace QQS_UI
         }
 
         /// <summary>
-        /// 将当前实例的颜色拷贝到<see cref="Global.Colors"/>中.
+        /// 将当前实例的颜色拷贝到<see cref="Global.Colors"/>中.<br/>
+        /// Copy colors owned by current instance to <see cref="Global.Colors"/>.
         /// </summary>
         /// <remarks>
-        /// 这不是一个线程安全操作.
+        /// 请注意: 这不是一个线程安全操作.<br/>
+        /// This is not a thread-safe operation.
         /// </remarks>
         /// <returns>
-        /// 如果当前颜色为<see langword="null"/>, 返回-1;
-        /// 如果当前颜色不为<see langword="null"/>, 但是长度为0, 返回1;
-        /// 如果操作无异常, 返回0.
+        /// 如果当前颜色为<see langword="null"/>, 返回-1;<br/>
+        /// 如果当前颜色不为<see langword="null"/>, 但是长度为0, 返回1;<br/>
+        /// 如果操作无异常, 返回0.<br/>
+        /// If colors owned by <see langword="this"/> is null then -1 will be returned;<br/>
+        /// If the color array owned by <see langword="this"/> is not null but its length equals 0, then 1 is returned;<br/>
+        /// If the operation is successful, returns 0.
         /// </returns>
         public int SetGlobal()
         {
