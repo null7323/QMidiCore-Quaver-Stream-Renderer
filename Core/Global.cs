@@ -13,10 +13,10 @@ namespace QQS_UI.Core
     /// </summary>
     public static class Global
     {
-        public static short[] GenKeyX = {
+        public static readonly short[] GenKeyX = {
             0, 12, 18, 33, 36, 54, 66, 72, 85, 90, 105, 108
         };
-        public static short[] DrawMap = {
+        public static readonly short[] DrawMap = {
             0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26, 28, 29,
             31, 33, 35, 36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57,
             59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84,
@@ -45,13 +45,20 @@ namespace QQS_UI.Core
             0xFF33E1E1, 0xFFE433E1, 0xFF99E133, 0xFF4B33E1, 0xFFFFCC33, 0xFF33B4FF,
             0xFFFF3333, 0xFF33FFB1, 0xFFFF33CC, 0xFF4EFF33, 0xFF9933FF, 0xFFE7FF33
         };
+        /// <summary>
+        /// 渲染器对象实际使用的颜色.<br/>
+        /// Colors that renderer actually uses.
+        /// </summary>
         public static RGBAColor[] Colors;
-        public static uint[] ColorHSV = new uint[96];
         static Global()
         {
             Colors = new RGBAColor[96];
             Array.Copy(DefaultColors, Colors, 96);
         }
+        /// <summary>
+        /// 将 Midi 时间转换为 <see cref="TimeSpan"/>.<br/>
+        /// Converts midi time to a new <see cref="TimeSpan"/> instance.
+        /// </summary>
         public static TimeSpan GetTimeOf(uint midiTime, ushort ppq, UnmanagedList<Tempo> tempos)
         {
             if (tempos == null)

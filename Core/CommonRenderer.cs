@@ -12,9 +12,11 @@ namespace QQS_UI.Core
     public class CommonRenderer : RendererBase
     {
         private readonly CommonCanvas canvas;
+        private readonly bool drawMiddleSquare;
         public CommonRenderer(RenderFile file, in RenderOptions options) : base(file, options)
         {
             canvas = new CommonCanvas(options);
+            drawMiddleSquare = options.DrawGreySquare;
         }
 
         public override void Render()
@@ -46,6 +48,11 @@ namespace QQS_UI.Core
             Stopwatch frameWatch = new Stopwatch();
             double frameLen = 10000000.0 / fps;
 
+            int middleCx = canvas.GetKeyX(60);
+            int middleCwidth = canvas.GetKeyWidth(60);
+            int greySquareY = (int)keyHeight * 2 / 15;
+            int greySquareLeft = middleCx + (middleCwidth / 4);
+            int greySquareWidth = middleCwidth * 2 / 4;
             for (int i = 0; i != 128; ++i)
             {
                 if (noteMap[i].Count != 0)
@@ -73,6 +80,7 @@ namespace QQS_UI.Core
                 {
                     break;
                 }
+                // 使用并行 for 循环提高性能.
                 _ = Parallel.For(0, 128, (i) =>
                 {
                     if (noteBegins[i] == null)
@@ -117,6 +125,17 @@ namespace QQS_UI.Core
                     }
                 });
                 canvas.DrawKeys();
+                if (drawMiddleSquare)
+                {
+                    if (canvas.KeyPressed[60])
+                    {
+                        canvas.FillRectangle(greySquareLeft, greySquareY - ((int)keyHeight / 50), greySquareWidth, greySquareWidth, 0xFFA0A0A0);
+                    }
+                    else
+                    {
+                        canvas.FillRectangle(greySquareLeft, greySquareY, greySquareWidth, greySquareWidth, 0xFFAAAAAA);
+                    }
+                }
                 canvas.WriteFrame();
                 if (isPreview && Global.LimitPreviewFPS)
                 {

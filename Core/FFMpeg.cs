@@ -30,6 +30,7 @@ namespace QQS_UI.Core
         }
         /// <summary>
         /// 向 FFMpeg 写入一帧.
+        /// Write a frame to FFMpeg.
         /// </summary>
         /// <param name="buffer">存有视频画面的缓冲区.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

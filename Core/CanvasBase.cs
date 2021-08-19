@@ -18,12 +18,24 @@ namespace QQS_UI.Core
         protected readonly uint lineColor;
         protected readonly ulong frameSize;
         protected FFMpeg pipe;
-        protected readonly int[] keyX = new int[128];
-        protected readonly int[] noteX = new int[128];
+        protected readonly int[] keyx = new int[128];
+        protected readonly int[] notex = new int[128];
         protected readonly int[] keyw = new int[128];
         protected readonly int[] notew = new int[128];
+        /// <summary>
+        /// 表示一个空帧的全部像素.<br/>
+        /// Represents an empty frame.<br/>
+        /// </summary>
+        /// <remarks>
+        /// 空帧可以用来快速清空绘制完的一帧.<br/>
+        /// An empty frame is able to clear the canvas quickly.
+        /// </remarks>
         protected uint* emptyFrame;
         protected uint* frame;
+        /// <summary>
+        /// 表示指向帧的索引.<br/>
+        /// Represents indexes of the frame.
+        /// </summary>
         protected uint** frameIdx;
         protected static readonly uint[] DefaultKeyColors = new uint[128];
         public readonly uint[] KeyColors = new uint[128];
@@ -39,9 +51,11 @@ namespace QQS_UI.Core
                     case 6:
                     case 8:
                     case 10:
+                        // 黑键 black keys
                         DefaultKeyColors[i] = 0xFF000000;
                         break;
                     default:
+                        // 白键 white keys
                         DefaultKeyColors[i] = 0xFFFFFFFF;
                         break;
                 }
@@ -60,14 +74,17 @@ namespace QQS_UI.Core
             StringBuilder ffargs = new StringBuilder();
             _ = ffargs.Append("-y -hide_banner -f rawvideo -pix_fmt rgba -s ").Append(width).Append('x')
                 .Append(height).Append(" -r ").Append(fps).Append(" -i - ");
+            // 如果要求使用 png 序列, 那么就加上 -vcodec png 指明编码器; 否则就添加像素格式.
             // if png encoder is required, append '-vcodec png' to specify the encoder; otherwise append pixel format.
             _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p -crf ").Append(crf).Append(" -preset ultrafast");
             _ = ffargs.Append(' ').Append(options.AdditionalFFMpegArgument);
             _ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
             pipe = new FFMpeg(ffargs.ToString(), width, height);
 
-            frame = (uint*)UnsafeMemory.Allocate(frameSize + ((uint)width * 4ul));
-            UnsafeMemory.Set(frame, 0, frameSize);
+            frame = (uint*)UnsafeMemory.Allocate(frameSize + ((uint)width * 4ul)); // memcpy
+            // 使用此方法: Call UnsafeMemory.Set in order to:
+            // 清空分配的帧, 将它们全部初始化为0. Clear the newly allocated frame, filling it with 0.
+            UnsafeMemory.Set(frame, 0, frameSize); // memset
 
             frameIdx = (uint**)UnsafeMemory.Allocate((ulong)height * (ulong)sizeof(void*));
             for (int i = 0; i != height; ++i)
@@ -107,44 +124,57 @@ namespace QQS_UI.Core
             frameIdx = null;
         }
 
+        /// <summary>
+        /// 绘制矩形边框.<br/>
+        /// Draws a rectangle which is not filled with specified color.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawRectangle(int x, int y, int w, int h, uint c)
+        public void DrawRectangle(int x, int y, int width, int height, uint color)
         {
 
             int i;
             //if (x < _Width)
-            for (i = y; i < y + h; ++i)
+            for (i = y; i < y + height; ++i)
             {
-                frameIdx[i][x] = c;
+                frameIdx[i][x] = color;
             }
             //if (y < _Height)
-            for (i = x; i < x + w; ++i)
+            for (i = x; i < x + width; ++i)
             {
-                frameIdx[y][i] = c;
+                frameIdx[y][i] = color;
             }
             //if (w > 1)
-            for (i = y; i < y + h; ++i)
+            for (i = y; i < y + height; ++i)
             {
-                frameIdx[i][x + w - 1] = c;
+                frameIdx[i][x + width - 1] = color;
             }
             //if (h > 1)
-            for (i = x; i < x + w; ++i)
+            for (i = x; i < x + width; ++i)
             {
-                frameIdx[y + h - 1][i] = c;
+                frameIdx[y + height - 1][i] = color;
             }
         }
+
+        /// <summary>
+        /// 用指定的颜色填满指定区域.<br/>
+        /// Fill specified area of the frame with given color.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void FillRectangle(int x, int y, int w, int h, uint c)
+        public void FillRectangle(int x, int y, int width, int height, uint color)
         {
-            for (int i = x, xend = x + w; i != xend; ++i)
+            for (int i = x, xend = x + width; i != xend; ++i)
             {
-                for (int j = y, yend = y + h; j != yend; ++j)
+                for (int j = y, yend = y + height; j != yend; ++j)
                 {
-                    frameIdx[j][i] = c;
+                    frameIdx[j][i] = color;
                 }
             }
         }
 
+        /// <summary>
+        /// 清空当前画布.<br/>
+        /// Clear the canvas immediately.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
@@ -158,6 +188,10 @@ namespace QQS_UI.Core
                 UnsafeMemory.Set(kp, 0, 128);
             }
         }
+        /// <summary>
+        /// 向 FFMpeg 写入当前帧.<br/>
+        /// Write current frame to ffmpeg.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteFrame()
         {

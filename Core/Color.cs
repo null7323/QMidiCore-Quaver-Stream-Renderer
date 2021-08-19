@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace QQS_UI.Core
 {
+    /// <summary>
+    /// 表示一个RGBA颜色结构.<br/>
+    /// Represents a color structure of RGBA.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct RGBAColor
     {
@@ -19,10 +23,12 @@ namespace QQS_UI.Core
         {
             fixed (RGBAColor* instance = &this)
             {
+                // 直接初始化. Initialize 'this' directly.
+                // 可以直接复制是因为 uint 是以小端序存储. It is ok to assign in this way, for unsigned int is little endian.
                 Buffer.MemoryCopy(&color, instance, 4, 4);
             }
         }
-        public unsafe RGBAColor(byte r, byte g, byte b, byte a)
+        public RGBAColor(byte r, byte g, byte b, byte a)
         {
             R = r;
             G = g;

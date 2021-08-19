@@ -12,11 +12,20 @@ namespace QQS_UI.Core
     /// </summary>
     public struct RenderOptions
     {
+        /// <summary>
+        /// 此成员没有被使用过.<br/>
+        /// This member is wasted.
+        /// </summary>
         public bool TickBased;
         public bool PNGEncoder;
         public bool TransparentBackground;
+        /// <summary>
+        /// 此成员没有被使用过.<br/>
+        /// This member is wasted.
+        /// </summary>
         public bool Horizontal;
         public bool PreviewMode;
+        public bool DrawGreySquare;
         public int Width, Height, FPS, CRF, KeyHeight;
         public RGBAColor DivideBarColor;
         public RGBAColor BackgroundColor;
@@ -42,6 +51,7 @@ namespace QQS_UI.Core
                 Horizontal = false,
                 PreviewMode = false,
                 AdditionalFFMpegArgument = string.Empty,
+                DrawGreySquare = false,
                 BackgroundColor = new RGBAColor
                 {
                     A = 0xFF,
