@@ -340,18 +340,6 @@ namespace QQS_UI
             }
         }
 
-        private void enableRandomColor_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
-        {
-            if (enableRandomColor.IsChecked)
-            {
-                _ = customColors.Shuffle().SetGlobal();
-            }
-            else
-            {
-                _ = customColors.SetGlobal();
-            }
-        }
-
         private void limitPreviewFPS_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             Global.LimitPreviewFPS = e.NewValue;
@@ -363,7 +351,7 @@ namespace QQS_UI
             {
                 RGBAColor[] colors = PFAConfigrationLoader.LoadPFAConfigurationColors();
                 customColors.Colors = colors;
-                customColors.SetGlobal();
+                _ = customColors.SetGlobal();
             }
             catch (Exception ex)
             {
@@ -403,6 +391,26 @@ namespace QQS_UI
         private void drawGreySquare_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             options.DrawGreySquare = e.NewValue;
+        }
+
+        private void enableNoteColorGradient_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.Gradient = e.NewValue;
+        }
+
+        private void shuffleColor_Click(object sender, RoutedEventArgs e)
+        {
+            customColors.Shuffle().SetGlobal();
+        }
+
+        private void enableSeparator_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.DrawSeparator = e.NewValue;
+        }
+
+        private void thinnerNotes_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.ThinnerNotes = e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
