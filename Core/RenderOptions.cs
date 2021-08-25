@@ -19,13 +19,11 @@ namespace QQS_UI.Core
         public bool TickBased;
         public bool PNGEncoder;
         public bool TransparentBackground;
-        /// <summary>
-        /// 此成员没有被使用过.<br/>
-        /// This member is wasted.
-        /// </summary>
-        public bool Horizontal;
+        public bool ThinnerNotes;
+        public bool DrawSeparator;
         public bool PreviewMode;
         public bool DrawGreySquare;
+        public bool Gradient;
         public int Width, Height, FPS, CRF, KeyHeight;
         public RGBAColor DivideBarColor;
         public RGBAColor BackgroundColor;
@@ -48,10 +46,12 @@ namespace QQS_UI.Core
                 TickBased = true,
                 PNGEncoder = false,
                 TransparentBackground = false,
-                Horizontal = false,
+                DrawSeparator = true,
                 PreviewMode = false,
                 AdditionalFFMpegArgument = string.Empty,
                 DrawGreySquare = false,
+                Gradient = false,
+                ThinnerNotes = true,
                 BackgroundColor = new RGBAColor
                 {
                     A = 0xFF,

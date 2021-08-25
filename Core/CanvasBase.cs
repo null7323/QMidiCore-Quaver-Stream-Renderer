@@ -81,7 +81,7 @@ namespace QQS_UI.Core
             _ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
             pipe = new FFMpeg(ffargs.ToString(), width, height);
 
-            frame = (uint*)UnsafeMemory.Allocate(frameSize + ((uint)width * 4ul)); // memcpy
+            frame = (uint*)UnsafeMemory.Allocate(frameSize + ((uint)width * 4ul)); // malloc
             // 使用此方法: Call UnsafeMemory.Set in order to:
             // 清空分配的帧, 将它们全部初始化为0. Clear the newly allocated frame, filling it with 0.
             UnsafeMemory.Set(frame, 0, frameSize); // memset

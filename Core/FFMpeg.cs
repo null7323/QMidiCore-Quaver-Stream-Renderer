@@ -29,7 +29,7 @@ namespace QQS_UI.Core
             Console.WriteLine("FFMpeg 启动命令: {0}", ffcommand);
         }
         /// <summary>
-        /// 向 FFMpeg 写入一帧.
+        /// 向 FFMpeg 写入一帧.<br/>
         /// Write a frame to FFMpeg.
         /// </summary>
         /// <param name="buffer">存有视频画面的缓冲区.</param>

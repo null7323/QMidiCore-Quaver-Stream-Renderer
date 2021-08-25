@@ -103,10 +103,6 @@ namespace QQS_UI.Core
         }
 
         public static bool LimitPreviewFPS = true;
-
-        public static double CurrentRenderTick = 0;
-        public static double RealtimeFPS = 0;
-        public static double RenderedFrameCount = 0;
     }
 
     public struct Note
