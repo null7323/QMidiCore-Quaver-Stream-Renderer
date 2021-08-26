@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.0" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.1" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -94,7 +94,7 @@
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="分割条颜色 (RGB):" Margin="0,0,0,0" Width="150" HorizontalAlignment="Left"/>
                                 <Label Content="#"/>
-                                <TextBox Text="800000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="barColor" IsReadOnly="{Binding ElementName=enableSeparator, Path=IsChecked}"/>
+                                <TextBox Text="800000" HorizontalAlignment="Left" Width="120" MaxLength="6" x:Name="barColor" IsReadOnly="{Binding ElementName=enableSeparator, Path=IsChecked, Converter={StaticResource NotValueConverter}}"/>
                                 <Border Background="Black" Width="30" Margin="10,0,0,0">
                                     <Canvas x:Name="previewColor" Margin="1,0,1,0"/>
                                 </Border>
