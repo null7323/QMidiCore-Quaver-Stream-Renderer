@@ -42,7 +42,7 @@ namespace QQS_UI.Core
                 CRF = 17,
                 KeyHeight = 162,
                 NoteSpeed = 1,
-                DivideBarColor = 0xFF000080,
+                DivideBarColor = 0xFF0000A0,
                 TickBased = true,
                 PNGEncoder = false,
                 TransparentBackground = false,
