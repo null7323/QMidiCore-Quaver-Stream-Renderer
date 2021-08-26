@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.1" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.2" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -76,6 +76,10 @@
                                 <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="222" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
                             </DockPanel>
                             <DockPanel Margin="0,10,0,0">
+                                <Label Content="键盘高度 (%): " HorizontalAlignment="Left" Width="150"/>
+                                <ui:NumberSelect Minimum="5" Maximum="45" Value="15" x:Name="keyboardHeightPercentage" HorizontalAlignment="Left" Width="100" ValueChanged="keyboardHeightPercentage_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
                                 <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
                                 <ui:BetterCheckbox Text="在中央 C 键绘制小正方形" Margin="0,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="False" x:Name="drawGreySquare" CheckToggled="drawGreySquare_CheckToggled"/>
                             </DockPanel>
@@ -125,20 +129,20 @@
                             <Label Content="输出" Margin="0,15,0,0" FontSize="20"/>
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="CRF: " HorizontalAlignment="Left" Width="150" Margin="0,0,0,0"/>
-                                <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="80" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                                <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="100" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
                             </DockPanel>
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="FPS:" HorizontalAlignment="Left" Width="150"/>
-                                <ComboBox x:Name="fpsBox" SelectedIndex="1" VerticalContentAlignment="Center" Background="#FEFEFE" HorizontalAlignment="Left" Width="180" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="fpsBox_SelectionChanged">
-                                    <ComboBoxItem Content="30"/>
-                                    <ComboBoxItem Content="60"/>
-                                    <ComboBoxItem Content="120"/>
-                                    <ComboBoxItem Content="240"/>
-                                </ComboBox>
+                                <ui:NumberSelect Minimum="15" Maximum="480" Value="60" x:Name="fps" HorizontalAlignment="Left" Width="100" ValueChanged="fps_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
                             </DockPanel>
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="渲染分辨率: " HorizontalAlignment="Left" Width="150"/>
-                                <ComboBox x:Name="renderResolution" SelectedIndex="2" Width="180" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsEditable="False" IsEnabled="{DynamicResource notRenderingOrPreviewing}" SelectionChanged="renderResolution_SelectionChanged">
+                                <Label Content="宽"/>
+                                <ui:NumberSelect x:Name="renderWidth" Value="1920" Minimum="480" Maximum="7680" Width="100" HorizontalAlignment="Left" ValueChanged="renderWidth_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                                <Label Content="高" Margin="5,0,0,0"/>
+                                <ui:NumberSelect x:Name="renderHeight" Value="1080" Minimum="360" Maximum="4320" Width="100" HorizontalAlignment="Left" ValueChanged="renderHeight_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                                <Label Content="使用预设值: " Margin="15,0,0,0"/>
+                                <ComboBox x:Name="presetResolution" IsEditable="False" SelectedIndex="2" VerticalContentAlignment="Center" SelectionChanged="presetResolution_SelectionChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}">
                                     <ComboBoxItem Content="480p (640x480, 4:3)"/>
                                     <ComboBoxItem Content="720p (1280x720, 16:9)"/>
                                     <ComboBoxItem Content="1080p (1920x1080, 16:9)"/>
