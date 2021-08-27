@@ -418,6 +418,11 @@ namespace QQS_UI
             options.KeyHeight = options.Height * keyHeightPercentage / 100;
         }
 
+        private void delayStart_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+        {
+            options.DelayStartSeconds = (double)e.NewValue;
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
