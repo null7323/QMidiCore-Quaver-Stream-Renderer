@@ -15,12 +15,14 @@ namespace QQS_UI.Core
         private readonly bool drawMiddleSquare;
         private readonly bool gradientNotes;
         private readonly bool thinnerNotes;
+        private readonly double delayStart;
         public CommonRenderer(RenderFile file, in RenderOptions options) : base(file, options)
         {
             canvas = new CommonCanvas(options);
             drawMiddleSquare = options.DrawGreySquare;
             gradientNotes = options.Gradient;
             thinnerNotes = options.ThinnerNotes;
+            delayStart = options.DelayStartSeconds;
         }
 
         public override void Render()
@@ -72,6 +74,22 @@ namespace QQS_UI.Core
                 }
             }
             int colorLen = Global.Colors.Length;
+
+            int delayFrames = (int)delayStart * fps;
+            canvas.Clear();
+            if (gradientNotes)
+            {
+                canvas.DrawGradientKeys();
+            }
+            else
+            {
+                canvas.DrawKeys();
+            }
+            for (int i = 0; i != delayFrames; ++i)
+            {
+                canvas.WriteFrame();
+            }
+
             for (; tick < fileTick; tick += spd)
             {
                 frameWatch.Restart();
@@ -167,7 +185,14 @@ namespace QQS_UI.Core
                 }
             }
             canvas.Clear();
-            canvas.DrawKeys();
+            if (gradientNotes)
+            {
+                canvas.DrawGradientKeys();
+            }
+            else
+            {
+                canvas.DrawKeys();
+            }
             for (int i = 0; i != 3 * fps; i++)
             {
                 if (Interrupt)
@@ -216,6 +241,20 @@ namespace QQS_UI.Core
                 }
             }
             int colorLen = Global.Colors.Length;
+            int delayFrames = (int)delayStart * fps;
+            canvas.Clear();
+            if (gradientNotes)
+            {
+                canvas.DrawGradientKeys();
+            }
+            else
+            {
+                canvas.DrawKeys();
+            }
+            for (int i = 0; i != delayFrames; ++i)
+            {
+                canvas.WriteFrame();
+            }
             for (; tick < fileTick; tick += spd)
             {
                 frameWatch.Restart();
@@ -364,7 +403,14 @@ namespace QQS_UI.Core
                 }
             }
             canvas.Clear();
-            canvas.DrawKeys();
+            if (gradientNotes)
+            {
+                canvas.DrawGradientKeys();
+            }
+            else
+            {
+                canvas.DrawKeys();
+            }
             for (int i = 0; i != 3 * fps; i++)
             {
                 if (Interrupt)

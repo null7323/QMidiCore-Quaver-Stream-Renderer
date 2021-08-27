@@ -28,6 +28,7 @@ namespace QQS_UI.Core
         public RGBAColor DivideBarColor;
         public RGBAColor BackgroundColor;
         public double NoteSpeed;
+        public double DelayStartSeconds;
         public string Input;
         public string Output;
         public string AdditionalFFMpegArgument;
@@ -52,6 +53,7 @@ namespace QQS_UI.Core
                 DrawGreySquare = false,
                 Gradient = false,
                 ThinnerNotes = true,
+                DelayStartSeconds = 0,
                 BackgroundColor = new RGBAColor
                 {
                     A = 0xFF,
