@@ -51,7 +51,7 @@ namespace QQS_UI.Core
                 PreviewMode = false,
                 AdditionalFFMpegArgument = string.Empty,
                 DrawGreySquare = false,
-                Gradient = false,
+                Gradient = true,
                 ThinnerNotes = true,
                 DelayStartSeconds = 0,
                 BackgroundColor = new RGBAColor

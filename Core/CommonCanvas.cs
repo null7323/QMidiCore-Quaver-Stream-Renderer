@@ -99,7 +99,7 @@ namespace QQS_UI.Core
             }
 
             // 末颜色与初颜色的比值
-            double referenceGradientRatio = Math.Pow(1.08, 10);
+            double referenceGradientRatio = Math.Pow(Global.NoteGradientScale, 10);
             for (int i = 0; i != 128; ++i)
             {
                 // 初始化索引为i的琴键对应的颜色数组.
@@ -125,7 +125,7 @@ namespace QQS_UI.Core
                 }
             }
             double keyrgb = 255;
-            referenceGradientRatio = Math.Pow(Math.Pow(1.002, 154), 1.0 / UnpressedWhiteKeyGradients.Length);
+            referenceGradientRatio = Math.Pow(Math.Pow(Global.UnpressedWhiteKeyGradientScale, 154), 1.0 / UnpressedWhiteKeyGradients.Length);
             int yThreshold = keyh - (keyh * 64 / 100);
             int currentY = keyh / 20;
             for (int i = 0; i != UnpressedWhiteKeyGradients.Length; ++i)
@@ -143,7 +143,7 @@ namespace QQS_UI.Core
             }
             currentY = 0;
             PressedWhiteKeyGradients = new RGBAColor[Global.Colors.Length][];
-            referenceGradientRatio = Math.Pow(Math.Pow(1.0025, 162), 1.0 / keyh);
+            referenceGradientRatio = Math.Pow(Math.Pow(Global.PressedWhiteKeyGradientScale, 162), 1.0 / keyh);
             for (int i = 0; i != Global.Colors.Length; ++i)
             {
                 PressedWhiteKeyGradients[i] = new RGBAColor[keyh];
@@ -360,7 +360,7 @@ namespace QQS_UI.Core
                 double r = gradientStart.R,
                     g = gradientStart.G,
                     b = gradientStart.B;
-                double gradientScale = Math.Pow(Math.Pow(1.08, 162 / 15), 1.0 / (keyh / 15));
+                double gradientScale = Math.Pow(Math.Pow(Global.SeparatorGradientScale, 162 / 15), 1.0 / (keyh / 15));
                 for (int y = keyh - 2, yend = y + (keyh / 15); y != yend; ++y)
                 {
                     uint col = (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16) | (gradientStart.A << 24));
