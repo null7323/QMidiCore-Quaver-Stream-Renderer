@@ -89,7 +89,7 @@ namespace QQS_UI.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static uint ParseVLInt(ref byte* p)
+        public static unsafe uint ParseVLInt(ref byte* p)
         {
             uint result = 0;
             uint b;
@@ -103,6 +103,18 @@ namespace QQS_UI.Core
         }
 
         public static bool LimitPreviewFPS = true;
+
+        public static double PressedWhiteKeyGradientScale = 1.0025;
+        public const double DefaultPressedWhiteKeyGradientScale = 1.0025;
+
+        public static double NoteGradientScale = 1.08;
+        public const double DefaultNoteGradientScale = 1.08;
+
+        public static double UnpressedWhiteKeyGradientScale = 1.002;
+        public const double DefaultUnpressedWhiteKeyGradientScale = 1.002;
+
+        public static double SeparatorGradientScale = 1.08;
+        public const double DefaultSeparatorGradientScale = 1.08;
     }
 
     public struct Note
@@ -121,5 +133,16 @@ namespace QQS_UI.Core
     {
         public uint Time;
         public uint Value;
+    }
+
+    public enum HorizontalGradientDirection
+    {
+        FromLeftToRight,
+        FromRightToLeft
+    }
+    public enum VerticalGradientDirection
+    {
+        FromButtomToTop,
+        FromTopToButtom
     }
 }

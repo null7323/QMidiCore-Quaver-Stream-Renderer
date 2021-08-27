@@ -16,10 +16,16 @@ namespace QQS_UI.Core
         public readonly ushort[] KeyTracks = new ushort[128];
         private readonly bool gradient;
         private readonly bool separator;
+        private readonly HorizontalGradientDirection noteGradientDirection;
+        private readonly VerticalGradientDirection separatorGradientDirection, keyboardGradientDirection;
         public CommonCanvas(in RenderOptions options) : base(options)
         {
             gradient = options.Gradient;
             separator = options.DrawSeparator;
+            noteGradientDirection = options.NoteGradientDirection;
+            separatorGradientDirection = options.SeparatorGradientDirection;
+            keyboardGradientDirection = options.KeyboardGradientDirection;
+
             UnpressedWhiteKeyGradients = new RGBAColor[keyh - (keyh / 20)];
             for (int i = 0; i != 128; ++i)
             {
@@ -115,33 +121,56 @@ namespace QQS_UI.Core
                     double r = gradientStart.R, g = gradientStart.G, b = gradientStart.B;
                     // 根据实际音符宽度计算每2个像素之间颜色之比.
                     double actualGradientRatio = Math.Pow(referenceGradientRatio, 1.0 / (notew[i] - 1));
+
                     for (int k = 0, len = NoteGradients[i][j].Length; k != len; ++k)
                     {
-                        cols[k] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
+                        int idx = noteGradientDirection == HorizontalGradientDirection.FromLeftToRight ? k : (len - k - 1);
+                        cols[idx] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
                         r /= actualGradientRatio;
                         g /= actualGradientRatio;
                         b /= actualGradientRatio;
                     }
+
                 }
             }
             double keyrgb = 255;
             referenceGradientRatio = Math.Pow(Math.Pow(Global.UnpressedWhiteKeyGradientScale, 154), 1.0 / UnpressedWhiteKeyGradients.Length);
             int yThreshold = keyh - (keyh * 64 / 100);
             int currentY = keyh / 20;
-            for (int i = 0; i != UnpressedWhiteKeyGradients.Length; ++i)
+            if (keyboardGradientDirection == VerticalGradientDirection.FromButtomToTop)
             {
-                UnpressedWhiteKeyGradients[i] = new RGBAColor((byte)keyrgb, (byte)keyrgb, (byte)keyrgb, 255);
-                if (currentY < yThreshold)
+                for (int i = 0; i != UnpressedWhiteKeyGradients.Length; ++i)
                 {
-                    keyrgb /= ((referenceGradientRatio - 1) / 3) + 1;
+                    UnpressedWhiteKeyGradients[i] = new RGBAColor((byte)keyrgb, (byte)keyrgb, (byte)keyrgb, 255);
+                    if (currentY < yThreshold)
+                    {
+                        keyrgb /= ((referenceGradientRatio - 1) / 3) + 1;
+                    }
+                    else
+                    {
+                        keyrgb /= referenceGradientRatio;
+                    }
+                    ++currentY;
                 }
-                else
-                {
-                    keyrgb /= referenceGradientRatio;
-                }
-                ++currentY;
             }
-            currentY = 0;
+            else
+            {
+                currentY = keyh;
+                yThreshold = keyh - yThreshold;
+                for (int i = UnpressedWhiteKeyGradients.Length - 1; i != -1; --i)
+                {
+                    UnpressedWhiteKeyGradients[i] = new RGBAColor((byte)keyrgb, (byte)keyrgb, (byte)keyrgb, 255);
+                    if (currentY > yThreshold)
+                    {
+                        keyrgb /= ((referenceGradientRatio - 1) / 3) + 1;
+                    }
+                    else
+                    {
+                        keyrgb /= referenceGradientRatio;
+                    }
+                    --currentY;
+                }
+            }
             PressedWhiteKeyGradients = new RGBAColor[Global.Colors.Length][];
             referenceGradientRatio = Math.Pow(Math.Pow(Global.PressedWhiteKeyGradientScale, 162), 1.0 / keyh);
             for (int i = 0; i != Global.Colors.Length; ++i)
@@ -152,21 +181,48 @@ namespace QQS_UI.Core
                 double r = gradientStart.R,
                     g = gradientStart.G,
                     b = gradientStart.B;
-                for (int j = 0; j != keyh; ++j)
+                if (keyboardGradientDirection == VerticalGradientDirection.FromButtomToTop)
                 {
-                    cols[j] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
-                    if (currentY < yThreshold)
+                    currentY = 0;
+                    for (int j = 0; j != keyh; ++j)
                     {
-                        double gradientRatio = ((referenceGradientRatio - 1) / 1.2) + 1;
-                        r /= gradientRatio;
-                        g /= gradientRatio;
-                        b /= gradientRatio;
+                        cols[j] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
+                        if (currentY < yThreshold)
+                        {
+                            double gradientRatio = ((referenceGradientRatio - 1) / 1.2) + 1;
+                            r /= gradientRatio;
+                            g /= gradientRatio;
+                            b /= gradientRatio;
+                        }
+                        else
+                        {
+                            r /= referenceGradientRatio;
+                            g /= referenceGradientRatio;
+                            b /= referenceGradientRatio;
+                        }
+                        ++currentY;
                     }
-                    else
+                }
+                else
+                {
+                    currentY = keyh;
+                    for (int j = keyh - 1; j != -1; --j)
                     {
-                        r /= referenceGradientRatio;
-                        g /= referenceGradientRatio;
-                        b /= referenceGradientRatio;
+                        cols[j] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
+                        if (currentY > yThreshold)
+                        {
+                            double gradientRatio = ((referenceGradientRatio - 1) / 1.2) + 1;
+                            r /= gradientRatio;
+                            g /= gradientRatio;
+                            b /= gradientRatio;
+                        }
+                        else
+                        {
+                            r /= referenceGradientRatio;
+                            g /= referenceGradientRatio;
+                            b /= referenceGradientRatio;
+                        }
+                        --currentY;
                     }
                 }
             }
@@ -361,16 +417,33 @@ namespace QQS_UI.Core
                     g = gradientStart.G,
                     b = gradientStart.B;
                 double gradientScale = Math.Pow(Math.Pow(Global.SeparatorGradientScale, 162 / 15), 1.0 / (keyh / 15));
-                for (int y = keyh - 2, yend = y + (keyh / 15); y != yend; ++y)
+                if (separatorGradientDirection == VerticalGradientDirection.FromButtomToTop)
                 {
-                    uint col = (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16) | (gradientStart.A << 24));
-                    for (int x = 0; x != width; ++x)
+                    for (int y = keyh - 2, yend = y + (keyh / 15); y != yend; ++y)
                     {
-                        frameIdx[y][x] = col;
+                        uint col = (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16) | (gradientStart.A << 24));
+                        for (int x = 0; x != width; ++x)
+                        {
+                            frameIdx[y][x] = col;
+                        }
+                        r /= gradientScale;
+                        g /= gradientScale;
+                        b /= gradientScale;
                     }
-                    r /= gradientScale;
-                    g /= gradientScale;
-                    b /= gradientScale;
+                }
+                else
+                {
+                    for (int y = keyh - 3 + (keyh / 15), yend = keyh - 3; y != yend; --y)
+                    {
+                        uint col = (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16) | (gradientStart.A << 24));
+                        for (int x = 0; x != width; ++x)
+                        {
+                            frameIdx[y][x] = col;
+                        }
+                        r /= gradientScale;
+                        g /= gradientScale;
+                        b /= gradientScale;
+                    }
                 }
             }
             else

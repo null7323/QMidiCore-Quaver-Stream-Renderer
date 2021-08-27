@@ -25,6 +25,9 @@ namespace QQS_UI.Core
         public bool DrawGreySquare;
         public bool Gradient;
         public int Width, Height, FPS, CRF, KeyHeight;
+        public VerticalGradientDirection KeyboardGradientDirection;
+        public VerticalGradientDirection SeparatorGradientDirection;
+        public HorizontalGradientDirection NoteGradientDirection;
         public RGBAColor DivideBarColor;
         public RGBAColor BackgroundColor;
         public double NoteSpeed;
@@ -54,6 +57,9 @@ namespace QQS_UI.Core
                 Gradient = true,
                 ThinnerNotes = true,
                 DelayStartSeconds = 0,
+                KeyboardGradientDirection = VerticalGradientDirection.FromButtomToTop,
+                NoteGradientDirection = HorizontalGradientDirection.FromLeftToRight,
+                SeparatorGradientDirection = VerticalGradientDirection.FromButtomToTop,
                 BackgroundColor = new RGBAColor
                 {
                     A = 0xFF,
