@@ -81,6 +81,10 @@ namespace QQS_UI
 #if DEBUG
             Title += " (Debug)";
 #endif
+            unpressedKeyboardGradientStrength.Value = Global.DefaultUnpressedWhiteKeyGradientScale;
+            pressedKeyboardGradientStrength.Value = Global.DefaultPressedWhiteKeyGradientScale;
+            noteGradientStrength.Value = Global.DefaultNoteGradientScale;
+            separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
         }
 
         private void openMidi_Click(object sender, RoutedEventArgs e)
@@ -421,6 +425,39 @@ namespace QQS_UI
         private void delayStart_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
         {
             options.DelayStartSeconds = (double)e.NewValue;
+        }
+
+        private void resetGradientScale_Click(object sender, RoutedEventArgs e)
+        {
+            unpressedKeyboardGradientStrength.Value = Global.DefaultUnpressedWhiteKeyGradientScale;
+            pressedKeyboardGradientStrength.Value = Global.DefaultPressedWhiteKeyGradientScale;
+            noteGradientStrength.Value = Global.DefaultNoteGradientScale;
+            separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
+
+            unpressedKeyboardGradientStrength.slider.Value = Global.DefaultUnpressedWhiteKeyGradientScale;
+            pressedKeyboardGradientStrength.slider.Value = Global.DefaultPressedWhiteKeyGradientScale;
+            noteGradientStrength.slider.Value = Global.DefaultNoteGradientScale;
+            separatorGradientStrength.slider.Value = Global.DefaultSeparatorGradientScale;
+        }
+
+        private void noteGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.NoteGradientScale = e.NewValue;
+        }
+
+        private void unpressedKeyboardGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.UnpressedWhiteKeyGradientScale = e.NewValue;
+        }
+
+        private void pressedKeyboardGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.PressedWhiteKeyGradientScale = e.NewValue;
+        }
+
+        private void separatorGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.SeparatorGradientScale = e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)

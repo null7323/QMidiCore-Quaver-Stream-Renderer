@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.3" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.4" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -63,7 +63,6 @@
                                 <Label Content="Midi 时长: " HorizontalAlignment="Left" Margin="5,0,0,0"/>
                                 <Label Content="--:--.---" HorizontalAlignment="Left" Width="150" x:Name="midiLen"/>
                             </DockPanel>
-
                         </StackPanel>
                     </Grid>
                 </TabItem>
@@ -85,7 +84,7 @@
                             </DockPanel>
                             <DockPanel Margin="0,0,0,0">
                                 <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
-                                <ui:BetterCheckbox Text="启用渐变效果" HorizontalAlignment="Left" Margin="0,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="enableNoteColorGradient" CheckToggled="enableNoteColorGradient_CheckToggled" IsChecked="False"/>
+                                <ui:BetterCheckbox Text="启用渐变效果" HorizontalAlignment="Left" Margin="0,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="enableNoteColorGradient" CheckToggled="enableNoteColorGradient_CheckToggled" IsChecked="True"/>
                             </DockPanel>
                             <DockPanel Margin="0,0,0,0">
                                 <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
@@ -119,6 +118,82 @@
                                     <Canvas x:Name="previewBackgroundColor" Margin="1,1,1,1"/>
                                 </Border>
                                 <Button Content="设置" HorizontalAlignment="Left" Width="120" Margin="10,0,0,0" x:Name="setbgColor" Click="setbgColor_Click" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="渐变" Style="{StaticResource SubTabItems}" Visibility="{Binding ElementName=enableNoteColorGradient, Path=IsChecked}">
+                    <StackPanel Margin="0,15,0,0">
+                        <Label Content="渐变设置" FontSize="20"/>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="音符渐变强度: " Width="180" HorizontalAlignment="Left"/>
+                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.25" Value="1.08" x:Name="noteGradientStrength" Step="0.001" TrueMin="1" TrueMax="1.25" DecimalPoints="4" ValueChanged="noteGradientStrength_ValueChanged">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="键盘渐变强度 (未按下):" Width="180"/>
+                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.1" Value="1.0025" x:Name="unpressedKeyboardGradientStrength" Step="0.001" DecimalPoints="5" TrueMin="1" TrueMax="1.2" ValueChanged="unpressedKeyboardGradientStrength_ValueChanged">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="键盘渐变强度 (已按下):" Width="180"/>
+                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.1" Value="1.002" x:Name="pressedKeyboardGradientStrength" Step="0.001" DecimalPoints="5" TrueMin="1" TrueMax="1.2" ValueChanged="pressedKeyboardGradientStrength_ValueChanged">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="分割条渐变强度:" Width="180"/>
+                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.2" Value="1.08" x:Name="separatorGradientStrength" Step="0.001" DecimalPoints="4" TrueMin="1" TrueMax="1.2" ValueChanged="separatorGradientStrength_ValueChanged">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                        <Binding ElementName="enableSeparator" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
+                        </DockPanel>
+                        <Button Content="恢复默认值" Width="180" HorizontalAlignment="Left" Margin="0,10,0,0" x:Name="resetGradientScale" Click="resetGradientScale_Click">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                    <Binding Path="IsChecked" ElementName="enableNoteColorGradient"/>
+                                    <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="颜色" Style="{StaticResource SubTabItems}">
+                    <Grid>
+                        <StackPanel Margin="0,15,0,0">
+                            <Label Content="颜色" FontSize="20"/>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="当前颜色文件路径:" Width="150" HorizontalAlignment="Left"/>
+                                <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorPath" IsReadOnly="True"/>
+                                <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openColorFile" Click="openColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
+                            </DockPanel>
+                            <Button Content="加载颜色文件" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadColors" Click="loadColors_Click" Margin="0,10,0,0"/>
+                            <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadPFAColors" Click="loadPFAColors_Click" Margin="0,10,0,0"/>
+                            <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="130" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
+                            <Button Content="随机颜色" HorizontalAlignment="Left" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="shuffleColor" Click="shuffleColor_Click" Width="130"/>
+                            <DockPanel Margin="0,15,0,0">
                             </DockPanel>
                         </StackPanel>
                     </Grid>
@@ -167,26 +242,7 @@
                         </StackPanel>
                     </Grid>
                 </TabItem>
-                <TabItem Header="颜色" Style="{StaticResource SubTabItems}">
-                    <Grid>
-                        <StackPanel Margin="0,15,0,0">
-                            <Label Content="颜色" FontSize="20"/>
-                            <DockPanel Margin="0,10,0,0">
-                                <Label Content="当前颜色文件路径:" Width="150" HorizontalAlignment="Left"/>
-                                <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorPath" IsReadOnly="True"/>
-                                <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openColorFile" Click="openColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
-                            </DockPanel>
-                            <Button Content="加载颜色文件" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadColors" Click="loadColors_Click" Margin="0,10,0,0"/>
-                            <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadPFAColors" Click="loadPFAColors_Click" Margin="0,10,0,0"/>
-                            <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="130" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
-                            <Button Content="随机颜色" HorizontalAlignment="Left" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="shuffleColor" Click="shuffleColor_Click" Width="130"/>
-                            <DockPanel Margin="0,15,0,0">
-                            </DockPanel>
-                        </StackPanel>
-                    </Grid>
-                </TabItem>
             </TabControl>
-            
         </DockPanel>
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <DockPanel Margin="0,10,0,0">
