@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.4" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.5" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -94,6 +94,17 @@
                                 <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
                                 <ui:BetterCheckbox Text="更细的音符" HorizontalAlignment="Left" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="thinnerNotes" CheckToggled="thinnerNotes_CheckToggled" IsChecked="True"/>
                             </DockPanel>
+                            <DockPanel Margin="0,0,0,0">
+                                <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                                <ui:BetterCheckbox Text="立体黑键" HorizontalAlignment="Left" x:Name="betterBlackKeys">
+                                    <ui:BetterCheckbox.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                            <Binding Path="IsChecked" ElementName="enableSeparator"/>
+                                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                        </MultiBinding>
+                                    </ui:BetterCheckbox.IsEnabled>
+                                </ui:BetterCheckbox>
+                            </DockPanel>
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="分割条颜色 (RGB):" Margin="0,0,0,0" Width="150" HorizontalAlignment="Left"/>
                                 <Label Content="#"/>
@@ -135,6 +146,16 @@
                                     </MultiBinding>
                                 </ui:ValueSlider.IsEnabled>
                             </ui:ValueSlider>
+                            <Label Content="分割条渐变强度:" Width="180" Margin="10,0,0,0"/>
+                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.2" Value="1.08" x:Name="separatorGradientStrength" Step="0.001" DecimalPoints="4" TrueMin="1" TrueMax="1.2" ValueChanged="separatorGradientStrength_ValueChanged">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                        <Binding ElementName="enableSeparator" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
                         </DockPanel>
                         <DockPanel Margin="0,10,0,0">
                             <Label Content="键盘渐变强度 (未按下):" Width="180"/>
@@ -146,9 +167,7 @@
                                     </MultiBinding>
                                 </ui:ValueSlider.IsEnabled>
                             </ui:ValueSlider>
-                        </DockPanel>
-                        <DockPanel Margin="0,10,0,0">
-                            <Label Content="键盘渐变强度 (已按下):" Width="180"/>
+                            <Label Content="键盘渐变强度 (已按下):" Width="180" Margin="10,0,0,0"/>
                             <ui:ValueSlider Minimum="1" Width="250" Maximum="1.1" Value="1.002" x:Name="pressedKeyboardGradientStrength" Step="0.001" DecimalPoints="5" TrueMin="1" TrueMax="1.2" ValueChanged="pressedKeyboardGradientStrength_ValueChanged">
                                 <ui:ValueSlider.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -159,16 +178,43 @@
                             </ui:ValueSlider>
                         </DockPanel>
                         <DockPanel Margin="0,10,0,0">
-                            <Label Content="分割条渐变强度:" Width="180"/>
-                            <ui:ValueSlider Minimum="1" Width="250" Maximum="1.2" Value="1.08" x:Name="separatorGradientStrength" Step="0.001" DecimalPoints="4" TrueMin="1" TrueMax="1.2" ValueChanged="separatorGradientStrength_ValueChanged">
-                                <ui:ValueSlider.IsEnabled>
+                            <Label Content="音符渐变方向:" Width="180" HorizontalAlignment="Left"/>
+                            <ComboBox HorizontalAlignment="Left" Width="180" SelectedIndex="0" VerticalContentAlignment="Center" x:Name="noteGradientDirection" SelectionChanged="noteGradientDirection_SelectionChanged">
+                                <ComboBox.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
-                                        <Binding ElementName="enableNoteColorGradient" Path="IsChecked"/>
-                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
-                                        <Binding ElementName="enableSeparator" Path="IsChecked"/>
+                                        <Binding Path="IsChecked" ElementName="enableNoteColorGradient"/>
+                                        <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
                                     </MultiBinding>
-                                </ui:ValueSlider.IsEnabled>
-                            </ui:ValueSlider>
+                                </ComboBox.IsEnabled>
+                                <ComboBoxItem Content="从左到右逐渐变暗"/>
+                                <ComboBoxItem Content="从右往左逐渐变暗"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="键盘渐变方向:" Width="180" HorizontalAlignment="Left"/>
+                            <ComboBox HorizontalAlignment="Left" Width="180" SelectedIndex="0" VerticalContentAlignment="Center" x:Name="keyboardGradientDirection" SelectionChanged="keyboardGradientDirection_SelectionChanged">
+                                <ComboBox.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding Path="IsChecked" ElementName="enableNoteColorGradient"/>
+                                        <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                    </MultiBinding>
+                                </ComboBox.IsEnabled>
+                                <ComboBoxItem Content="从下到上逐渐变暗"/>
+                                <ComboBoxItem Content="从上到下逐渐变暗"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="分割条渐变方向:" Width="180" HorizontalAlignment="Left"/>
+                            <ComboBox HorizontalAlignment="Left" Width="180" SelectedIndex="0" VerticalContentAlignment="Center" x:Name="barGradientDirection" SelectionChanged="barGradientDirection_SelectionChanged">
+                                <ComboBox.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding Path="IsChecked" ElementName="enableNoteColorGradient"/>
+                                        <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                    </MultiBinding>
+                                </ComboBox.IsEnabled>
+                                <ComboBoxItem Content="从下到上逐渐变暗"/>
+                                <ComboBoxItem Content="从上到下逐渐变暗"/>
+                            </ComboBox>
                         </DockPanel>
                         <Button Content="恢复默认值" Width="180" HorizontalAlignment="Left" Margin="0,10,0,0" x:Name="resetGradientScale" Click="resetGradientScale_Click">
                             <Button.IsEnabled>

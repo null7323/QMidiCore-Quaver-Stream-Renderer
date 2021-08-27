@@ -438,6 +438,14 @@ namespace QQS_UI
             pressedKeyboardGradientStrength.slider.Value = Global.DefaultPressedWhiteKeyGradientScale;
             noteGradientStrength.slider.Value = Global.DefaultNoteGradientScale;
             separatorGradientStrength.slider.Value = Global.DefaultSeparatorGradientScale;
+
+            options.KeyboardGradientDirection = VerticalGradientDirection.FromButtomToTop;
+            options.SeparatorGradientDirection = VerticalGradientDirection.FromButtomToTop;
+            options.NoteGradientDirection = HorizontalGradientDirection.FromLeftToRight;
+
+            keyboardGradientDirection.SelectedIndex = 0;
+            noteGradientDirection.SelectedIndex = 0;
+            barGradientDirection.SelectedIndex = 0;
         }
 
         private void noteGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -458,6 +466,21 @@ namespace QQS_UI
         private void separatorGradientStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Global.SeparatorGradientScale = e.NewValue;
+        }
+
+        private void noteGradientDirection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            options.NoteGradientDirection = (HorizontalGradientDirection)noteGradientDirection.SelectedIndex;
+        }
+
+        private void keyboardGradientDirection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            options.KeyboardGradientDirection = (VerticalGradientDirection)keyboardGradientDirection.SelectedIndex;
+        }
+
+        private void barGradientDirection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            options.SeparatorGradientDirection = (VerticalGradientDirection)barGradientDirection.SelectedIndex;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
