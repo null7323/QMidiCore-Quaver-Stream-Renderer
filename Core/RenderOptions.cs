@@ -24,6 +24,7 @@ namespace QQS_UI.Core
         public bool PreviewMode;
         public bool DrawGreySquare;
         public bool Gradient;
+        public bool BetterBlackKeys;
         public int Width, Height, FPS, CRF, KeyHeight;
         public VerticalGradientDirection KeyboardGradientDirection;
         public VerticalGradientDirection SeparatorGradientDirection;
@@ -57,6 +58,7 @@ namespace QQS_UI.Core
                 Gradient = true,
                 ThinnerNotes = true,
                 DelayStartSeconds = 0,
+                BetterBlackKeys = false,
                 KeyboardGradientDirection = VerticalGradientDirection.FromButtomToTop,
                 NoteGradientDirection = HorizontalGradientDirection.FromLeftToRight,
                 SeparatorGradientDirection = VerticalGradientDirection.FromButtomToTop,

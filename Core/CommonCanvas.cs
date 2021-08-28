@@ -16,6 +16,7 @@ namespace QQS_UI.Core
         public readonly ushort[] KeyTracks = new ushort[128];
         private readonly bool gradient;
         private readonly bool separator;
+        private readonly bool betterBlackKeys;
         private readonly HorizontalGradientDirection noteGradientDirection;
         private readonly VerticalGradientDirection separatorGradientDirection, keyboardGradientDirection;
         public CommonCanvas(in RenderOptions options) : base(options)
@@ -25,6 +26,7 @@ namespace QQS_UI.Core
             noteGradientDirection = options.NoteGradientDirection;
             separatorGradientDirection = options.SeparatorGradientDirection;
             keyboardGradientDirection = options.KeyboardGradientDirection;
+            betterBlackKeys = options.BetterBlackKeys;
 
             UnpressedWhiteKeyGradients = new RGBAColor[keyh - (keyh / 20)];
             for (int i = 0; i != 128; ++i)
@@ -269,15 +271,33 @@ namespace QQS_UI.Core
                 }
             }
             int diff = keyh - bh;
-            for (; i != 128; ++i) // 绘制所有黑键. Draws all black keys.
+            if (!betterBlackKeys)
             {
-                j = Global.DrawMap[i];
-                FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
-                DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                for (; i != 128; ++i) // 绘制所有黑键. Draws all black keys.
+                {
+                    j = Global.DrawMap[i];
+                    FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                    DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                }
             }
-            if (separator)
+            DrawSeperator();
+            if (betterBlackKeys)
             {
-                FillRectangle(0, keyh - 2, width, keyh / 15, lineColor);
+                int dtHeight = (int)Math.Round(keyh / 15.0);
+                for (i = 75; i != 128; ++i)
+                {
+                    j = Global.DrawMap[i];
+                    if (KeyPressed[j])
+                    {
+                        FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                        DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                    }
+                    else
+                    {
+                        FillRectangle(keyx[j], diff, keyw[j], bh + dtHeight, 0xFF272727); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                        DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                    }
+                }
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -311,17 +331,44 @@ namespace QQS_UI.Core
                     DrawRectangle(keyx[j], 0, keyw[j] + 1, bgr, 0xFF000000);
                     FillRectangle(keyx[j] + 1, 1, keyw[j] - 1, bgr - 2, 0xFF999999); // 绘制琴键底部阴影. 感谢 Tweak 对阴影进行改善.
                 }
+
                 DrawRectangle(keyx[j], 0, keyw[j] + 1, keyh, 0xFF000000);
             }
             int diff = keyh - bh;
-            for (; i != 128; ++i) // 绘制所有黑键. Draws all black keys.
+            if (!betterBlackKeys)
             {
-                j = Global.DrawMap[i];
-                FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
-                DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                for (; i != 128; ++i) // 绘制所有黑键. Draws all black keys.
+                {
+                    j = Global.DrawMap[i];
+                    FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                    DrawRectangle(keyx[j], diff, keyw[j] + 1, bh, 0xFF000000);
+                }
+            }
+            DrawSeperator();
+            if (betterBlackKeys)
+            {
+                int dtHeight = (int)Math.Round(keyh / 45.0);
+                int dtWidth = (int)Math.Round(width / 1500.0);
+                int dtDiff = diff * 95 / 1000;
+                int actualBlackKeyHeight = bh - dtHeight - 2;
+                bh -= dtDiff;
+                diff += dtDiff;
+                for (i = 75; i != 128; ++i)
+                {
+                    j = Global.DrawMap[i];
+                    if (KeyPressed[j])
+                    {
+                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF272727);
+                        FillRectangle(keyx[j], diff, keyw[j], actualBlackKeyHeight, KeyColors[j]);
+                    }
+                    else
+                    {
+                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF272727);
+                        FillRectangle(keyx[j], diff, keyw[j], bh + dtHeight, 0xFF000000); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                    }
+                }
             }
             //FillRectangle(0, keyh - 2, width, keyh / 15, lineColor);
-            DrawSeperator();
         }
         public new void Dispose()
         {
