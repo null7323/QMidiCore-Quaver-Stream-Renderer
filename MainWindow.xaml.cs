@@ -483,6 +483,11 @@ namespace QQS_UI
             options.SeparatorGradientDirection = (VerticalGradientDirection)barGradientDirection.SelectedIndex;
         }
 
+        private void betterBlackKeys_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.BetterBlackKeys = e.NewValue;
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
