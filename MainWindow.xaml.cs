@@ -497,11 +497,16 @@ namespace QQS_UI
                 {
                     options.DrawSeparator = enableSeparator.IsChecked;
                 }
+                if (drawGreySquare != null)
+                {
+                    options.DrawGreySquare = drawGreySquare.IsChecked;
+                }
 
             }
             else
             {
                 options.KeyHeight = 0;
+                options.DrawGreySquare = false;
                 options.DrawSeparator = false;
             }
         }
