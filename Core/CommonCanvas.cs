@@ -135,6 +135,10 @@ namespace QQS_UI.Core
 
                 }
             }
+            if (keyh == 0)
+            {
+                return;
+            }
             double keyrgb = 255;
             referenceGradientRatio = Math.Pow(Math.Pow(Global.UnpressedWhiteKeyGradientScale, 154), 1.0 / UnpressedWhiteKeyGradients.Length);
             int yThreshold = keyh - (keyh * 64 / 100);
@@ -256,6 +260,10 @@ namespace QQS_UI.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawKeys()
         {
+            if (keyh == 0)
+            {
+                return;
+            }
             int i, j;
             int bh = keyh * 64 / 100;
             int bgr = keyh / 20;
@@ -303,6 +311,10 @@ namespace QQS_UI.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawGradientKeys()
         {
+            if (keyh == 0)
+            {
+                return;
+            }
             int i, j, bh = keyh * 64 / 100, bgr = keyh / 20;
             for (i = 0; i != 75; ++i)
             {
