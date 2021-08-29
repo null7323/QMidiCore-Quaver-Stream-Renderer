@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.9" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.10" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
