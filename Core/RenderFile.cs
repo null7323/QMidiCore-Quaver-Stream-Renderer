@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SharpExtension.IO;
 using SharpExtension;
 using SharpExtension.Collections;
+using QQSAPI;
 
 namespace QQS_UI.Core
 {
@@ -301,7 +302,14 @@ namespace QQS_UI.Core
                 nl.TrimExcess();
                 NoteSorter.Sort(nl);
             });
-
+            if (Tempos.Count == 0)
+            {
+                Tempos.Add(new Tempo
+                {
+                    Tick = 0,
+                    Value = 500000
+                });
+            }
             // sort tempos
             Tempo[] temp = Tempos.ToManaged();
             Array.Sort(temp, (left, right) =>
