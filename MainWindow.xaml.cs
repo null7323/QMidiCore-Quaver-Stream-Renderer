@@ -488,6 +488,24 @@ namespace QQS_UI
             options.BetterBlackKeys = e.NewValue;
         }
 
+        private void drawKeyboard_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            if (e.NewValue)
+            {
+                options.KeyHeight = options.Height * keyHeightPercentage / 100;
+                if (enableSeparator != null)
+                {
+                    options.DrawSeparator = enableSeparator.IsChecked;
+                }
+
+            }
+            else
+            {
+                options.KeyHeight = 0;
+                options.DrawSeparator = false;
+            }
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
