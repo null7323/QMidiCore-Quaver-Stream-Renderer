@@ -8,3 +8,10 @@ QMidiCore Quaver Stream Renderer (简称QQS) 是一个黑乐谱渲染器. 原作
 
 ### UI
 使用了Arduano的"Zenith-MIDI"项目中的UI样式，并进行了颜色修改.
+
+### Contributors
+- qishipai (原作者)
+- Tweak
+- fnull601
+- MBMS (翻译)
+- And you
