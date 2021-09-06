@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using QQSAPI;
 using SharpExtension.Collections;
 
 namespace QQS_UI.Core
@@ -115,18 +116,8 @@ namespace QQS_UI.Core
 
         public static double SeparatorGradientScale = 1.08;
         public const double DefaultSeparatorGradientScale = 1.08;
-    }
 
-    public struct Note
-    {
-        public byte Key;
-        public ushort Track;
-        public uint Start, End;
-    }
-    public struct Tempo
-    {
-        public uint Tick;
-        public uint Value;
+        public static int MaxRenderThreads = Environment.ProcessorCount;
     }
 
     public struct PreviewEvent

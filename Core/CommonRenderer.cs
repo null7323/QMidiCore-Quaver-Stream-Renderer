@@ -1,4 +1,5 @@
-﻿using SharpExtension;
+﻿using QQSAPI;
+using SharpExtension;
 using SharpExtension.Collections;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace QQS_UI.Core
         private readonly bool gradientNotes;
         private readonly bool thinnerNotes;
         private readonly double delayStart;
+        private readonly ParallelOptions parallelOptions;
         public CommonRenderer(RenderFile file, in RenderOptions options) : base(file, options)
         {
             canvas = new CommonCanvas(options);
@@ -23,6 +25,11 @@ namespace QQS_UI.Core
             gradientNotes = options.Gradient;
             thinnerNotes = options.ThinnerNotes;
             delayStart = options.DelayStartSeconds;
+
+            parallelOptions = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Global.MaxRenderThreads
+            };
         }
 
         public override void Render()
@@ -89,7 +96,6 @@ namespace QQS_UI.Core
             {
                 canvas.WriteFrame();
             }
-
             for (; tick < fileTick; tick += spd)
             {
                 frameWatch.Restart();
@@ -105,7 +111,7 @@ namespace QQS_UI.Core
                     break;
                 }
                 // 使用并行 for 循环提高性能.
-                _ = Parallel.For(0, 128, (i) =>
+                _ = Parallel.For(0, 128, parallelOptions, (i) =>
                 {
                     if (noteBegins[i] == null)
                     {
@@ -270,7 +276,7 @@ namespace QQS_UI.Core
                     break;
                 }
                 // 使用并行 for 循环提高性能.
-                _ = Parallel.For(0, 75, (i) =>
+                _ = Parallel.For(0, 75, parallelOptions, (i) =>
                 {
                     i = Global.DrawMap[i];
                     if (noteBegins[i] == null)
@@ -322,7 +328,7 @@ namespace QQS_UI.Core
                         ++noteptr;
                     }
                 });
-                _ = Parallel.For(75, 128, (i) =>
+                _ = Parallel.For(75, 128, parallelOptions, (i) =>
                 {
                     i = Global.DrawMap[i];
                     if (noteBegins[i] == null)

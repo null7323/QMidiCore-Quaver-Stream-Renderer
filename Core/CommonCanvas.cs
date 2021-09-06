@@ -257,7 +257,6 @@ namespace QQS_UI.Core
         /// 绘制所有的琴键.<br/>
         /// Draw all keys.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawKeys()
         {
             if (keyh == 0)
@@ -299,7 +298,7 @@ namespace QQS_UI.Core
                     if (KeyPressed[j])
                     {
                         FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF363636);
-                        FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]);
+                        FillRectangle(keyx[j], diff, keyw[j], bh - 2, KeyColors[j]);
                     }
                     else
                     {
@@ -309,7 +308,6 @@ namespace QQS_UI.Core
                 }
             }
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawGradientKeys()
         {
             if (keyh == 0)
@@ -369,7 +367,7 @@ namespace QQS_UI.Core
                     if (KeyPressed[j])
                     {
                         FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF363636);
-                        FillRectangle(keyx[j], diff, keyw[j], bh, KeyColors[j]);
+                        FillRectangle(keyx[j], diff, keyw[j], bh - 2, KeyColors[j]);
                     }
                     else
                     {
@@ -421,7 +419,6 @@ namespace QQS_UI.Core
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawGradientNote(short key, int colorIndex, int y, int height)
         {
             RGBAColor[] gradientColors = NoteGradients[key][colorIndex];
