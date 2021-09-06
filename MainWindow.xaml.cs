@@ -85,6 +85,10 @@ namespace QQS_UI
             pressedKeyboardGradientStrength.Value = Global.DefaultPressedWhiteKeyGradientScale;
             noteGradientStrength.Value = Global.DefaultNoteGradientScale;
             separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
+
+            Global.MaxRenderThreads = Environment.ProcessorCount;
+            maxRenderThreads.Value = Global.MaxRenderThreads;
+            maxRenderThreads.Maximum = Global.MaxRenderThreads * 4;
         }
 
         private void openMidi_Click(object sender, RoutedEventArgs e)
@@ -117,6 +121,8 @@ namespace QQS_UI
             }
             trackCount.Content = "加载中...";
             noteCount.Content = "加载中...";
+            midiLen.Content = "加载中...";
+            midiPPQ.Content = "加载中...";
             _ = Task.Run(() =>
             {
                 isLoading = true;
@@ -129,6 +135,7 @@ namespace QQS_UI
                     trackCount.Content = file.TrackCount.ToString();
                     noteCount.Content = file.NoteCount.ToString();
                     midiLen.Content = midilen.ToString("mm\\:ss\\.fff");
+                    midiPPQ.Content = file.Division;
                 });
             });
         }
@@ -143,6 +150,7 @@ namespace QQS_UI
             noteCount.Content = "-";
             trackCount.Content = "-";
             midiLen.Content = "--:--.---";
+            midiPPQ.Content = '-';
         }
 
         private void noteSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -509,6 +517,11 @@ namespace QQS_UI
                 options.DrawGreySquare = false;
                 options.DrawSeparator = false;
             }
+        }
+
+        private void maxRenderThreads_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+        {
+            Global.MaxRenderThreads = (int)e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
