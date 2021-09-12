@@ -297,7 +297,7 @@ namespace QQS_UI.Core
                     j = Global.DrawMap[i];
                     if (KeyPressed[j])
                     {
-                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF363636);
+                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth - 2, 0xFF363636);
                         FillRectangle(keyx[j], diff, keyw[j], bh - 2, KeyColors[j]);
                     }
                     else
@@ -366,7 +366,7 @@ namespace QQS_UI.Core
                     j = Global.DrawMap[i];
                     if (KeyPressed[j])
                     {
-                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF363636);
+                        FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth - 2, 0xFF363636);
                         FillRectangle(keyx[j], diff, keyw[j], bh - 2, KeyColors[j]);
                     }
                     else

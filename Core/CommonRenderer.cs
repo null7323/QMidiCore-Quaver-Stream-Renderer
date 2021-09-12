@@ -28,7 +28,7 @@ namespace QQS_UI.Core
 
             parallelOptions = new ParallelOptions
             {
-                MaxDegreeOfParallelism = Global.MaxRenderThreads
+                MaxDegreeOfParallelism = Global.MaxRenderConcurrency
             };
         }
 

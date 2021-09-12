@@ -66,34 +66,36 @@ namespace QQS_UI.Core
             width = options.Width;
             height = options.Height;
             fps = options.FPS;
-            crf = options.CRF;
+            crf = options.VideoQuality;
             keyh = options.KeyHeight;
             lineColor = options.DivideBarColor;
             frameSize = (ulong)width * (ulong)height * 4ul;
 
             StringBuilder ffargs = new StringBuilder();
-            
+
             _ = ffargs.Append("-y -hide_banner -f rawvideo -pix_fmt rgba -s ").Append(width).Append('x')
                 .Append(height).Append(" -r ").Append(fps).Append(" -i - ");
             // 如果要求使用 png 序列, 那么就加上 -vcodec png 指明编码器; 否则就添加像素格式.
-            // if png encoder is required, append '-vcodec png' to specify the encoder; otherwise append pixel format.
-            _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p -crf ").Append(crf).Append(" -preset ultrafast");
+            // if png encoder is requested, append '-vcodec png' to specify the encoder; otherwise append pixel format.
+            _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p -preset ultrafast");
             _ = ffargs.Append(' ').Append(options.AdditionalFFMpegArgument);
             //_ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
             if (options.PreviewMode)
             {
                 Version osVer = Environment.OSVersion.Version;
-                if (osVer.Major == 6 && osVer.Minor == 1)
-                {
-                    _ = ffargs.Append(" -f sdl Preview");
-                }
-                else
-                {
-                    _ = ffargs.Append(" -f sdl2 Preview");
-                }
+                _ = osVer.Major == 6 && osVer.Minor == 1 ? ffargs.Append(" -f sdl Preview") : ffargs.Append(" -f sdl2 Preview");
             }
             else
             {
+                if (options.QualityOptions == VideoQualityOptions.CRF)
+                {
+                    _ = ffargs.Append(" -crf ").Append(options.VideoQuality);
+                }
+                else
+                {
+                    _ = ffargs.Append(" -b:v ").Append(options.VideoQuality).Append("k -maxrate ").Append(options.VideoQuality).Append("k -minrate ")
+                        .Append(options.VideoQuality).Append("k -bufsize ").Append(options.VideoQuality).Append('k');
+                }
                 _ = ffargs.Append(" \"").Append(options.Output).Append("\"");
             }
             pipe = new FFMpeg(ffargs.ToString(), width, height);

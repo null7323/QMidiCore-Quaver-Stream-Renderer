@@ -134,7 +134,11 @@ namespace QQS_UI.Core
             {
                 Notes[i] = new UnmanagedList<Note>();
             }
-            _ = Parallel.For(0, TrackCount, (i) =>
+            ParallelOptions opt = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Global.MaxMIDILoaderConcurrency
+            };
+            _ = Parallel.For(0, TrackCount, opt, (i) =>
             {
                 UnmanagedList<Note> nl = trkInfo[i].Notes; // pass by ref
                 ForwardLinkedList<long>[] fll = new ForwardLinkedList<long>[128];

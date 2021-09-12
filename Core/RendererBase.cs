@@ -1,4 +1,5 @@
-﻿using SharpExtension.Collections;
+﻿using QQSAPI;
+using SharpExtension.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,11 @@ namespace QQS_UI.Core
             isPreview = options.PreviewMode;
 
             Console.WriteLine("正在对 Midi 文件进行 OR 处理.");
-            _ = Parallel.For(0, 128, (i) =>
+            ParallelOptions opt = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Global.MaxMIDILoaderConcurrency
+            };
+            _ = Parallel.For(0, 128, opt, (i) =>
             {
                 UnmanagedList<Note> nl = noteMap[i];
                 if (nl.Count < 10)

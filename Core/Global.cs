@@ -117,7 +117,8 @@ namespace QQS_UI.Core
         public static double SeparatorGradientScale = 1.08;
         public const double DefaultSeparatorGradientScale = 1.08;
 
-        public static int MaxRenderThreads = Environment.ProcessorCount;
+        public static int MaxMIDILoaderConcurrency = -1;
+        public static int MaxRenderConcurrency = -1;
     }
 
     public struct PreviewEvent
@@ -135,5 +136,10 @@ namespace QQS_UI.Core
     {
         FromButtomToTop,
         FromTopToButtom
+    }
+    public enum VideoQualityOptions
+    {
+        CRF,
+        Bitrate
     }
 }

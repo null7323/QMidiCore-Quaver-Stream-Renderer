@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using QQSAPI;
 using SharpExtension;
 using SharpExtension.Collections;
 
@@ -34,7 +35,7 @@ namespace QQS_UI.Core
         /// 如果 a处元素 > b处元素, 进行交换
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void SwapIfGreater(Note* collection, in long a, in long b)
+        private static void SwapIfGreater(in Note* collection, in long a, in long b)
         {
             if (a != b)
             {
@@ -56,7 +57,7 @@ namespace QQS_UI.Core
             return left.Start < right.Start || (left.Track < right.Track && left.Start == right.Start);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void InsertionSort(Note* collection, in long low, in long high)
+        private static void InsertionSort(in Note* collection, in long low, in long high)
         {
             long i, j;
             Note t;
@@ -77,7 +78,7 @@ namespace QQS_UI.Core
         /// <summary>
         /// 内省排序.
         /// </summary>
-        private static void IntroSort(Note* collection, in long low, long high, long depth)
+        private static void IntroSort(in Note* collection, in long low, long high, long depth)
         {
             while (high > low)
             {
@@ -114,7 +115,7 @@ namespace QQS_UI.Core
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void DownHeap(Note* collection, long i, in long n, in long low)
+        private static void DownHeap(in Note* collection, long i, in long n, in long low)
         {
             Note d = collection[low + i - 1];
             long child;
@@ -139,7 +140,7 @@ namespace QQS_UI.Core
         /// 堆排序.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void HeapSort(Note* collection, in long low, in long high)
+        private static void HeapSort(in Note* collection, in long low, in long high)
         {
             long n = high - low + 1;
             for (long i = n / 2; i >= 1; --i)
@@ -169,7 +170,7 @@ namespace QQS_UI.Core
             }
         }
 
-        private static long PickPivotAndPartition(Note* collection, in long lo, in long hi)
+        private static long PickPivotAndPartition(in Note* collection, in long lo, in long hi)
         {
             long mid = lo + (hi - lo) / 2;
             SwapIfGreater(collection, lo, mid);
