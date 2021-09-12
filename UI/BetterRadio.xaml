@@ -22,6 +22,6 @@
 
             </Grid>
         </Grid>
-        <TextBlock FontSize="14" Margin="3,0,0,0" Text="{Binding ElementName=root, Path=Text}" VerticalAlignment="Center"/>
+        <TextBlock FontSize="16" Margin="3,0,0,0" Text="{Binding ElementName=root, Path=Text}" VerticalAlignment="Center"/>
     </DockPanel>
 </UserControl>

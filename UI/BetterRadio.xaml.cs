@@ -34,8 +34,8 @@ namespace QQS_UI.UI
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -90,11 +90,23 @@ namespace QQS_UI.UI
                 .Set(checkedBox, VisibilityProperty);
         }
 
-        void RecursiveUncheck(FrameworkElement p)
+        private void RecursiveUncheck(FrameworkElement p)
         {
-            if (p is Panel)
-                foreach (var c in ((Panel)p).Children) if(c is FrameworkElement) RecursiveUncheck((FrameworkElement)c);
-            if (p is BetterRadio && p != this) ((BetterRadio)p).IsChecked = false;
+            if (p is Panel panel)
+            {
+                foreach (object c in panel.Children)
+                {
+                    if (c is FrameworkElement element)
+                    {
+                        RecursiveUncheck(element);
+                    }
+                }
+            }
+
+            if (p is BetterRadio radio && p != this)
+            {
+                radio.IsChecked = false;
+            }
         }
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -106,26 +118,28 @@ namespace QQS_UI.UI
 
             double o = 0.7;
 
-            var targetWidth = rippleBox.ActualWidth;
+            double targetWidth = rippleBox.ActualWidth;
 
-            var ellipse = new Ellipse()
+            Ellipse ellipse = new Ellipse()
             {
                 Fill = (Brush)Resources["PrimaryBrush"],
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 Opacity = o
             };
-            ellipse.SetBinding(HeightProperty, new Binding("Width") { Source = ellipse });
+            _ = ellipse.SetBinding(HeightProperty, new Binding("Width") { Source = ellipse });
 
             Storyboard storyboard = new Storyboard();
 
-            var expand = new DoubleAnimation(10, targetWidth, new Duration(TimeSpan.FromSeconds(ExpandTime + FadeTime)));
+            DoubleAnimation expand = new DoubleAnimation(10, targetWidth, new Duration(TimeSpan.FromSeconds(ExpandTime + FadeTime)));
             storyboard.Children.Add(expand);
             Storyboard.SetTarget(expand, ellipse);
             Storyboard.SetTargetProperty(expand, new PropertyPath(WidthProperty));
 
-            var opacity = new DoubleAnimation(o, 0, new Duration(TimeSpan.FromSeconds(FadeTime)));
-            opacity.BeginTime = TimeSpan.FromSeconds(ExpandTime);
+            DoubleAnimation opacity = new DoubleAnimation(o, 0, new Duration(TimeSpan.FromSeconds(FadeTime)))
+            {
+                BeginTime = TimeSpan.FromSeconds(ExpandTime)
+            };
             storyboard.Children.Add(opacity);
             Storyboard.SetTarget(opacity, ellipse);
             Storyboard.SetTargetProperty(opacity, new PropertyPath(Ellipse.OpacityProperty));
@@ -134,8 +148,8 @@ namespace QQS_UI.UI
 
             storyboard.Begin();
 
-            var waitTime = ExpandTime + FadeTime;
-            Task.Run(() =>
+            double waitTime = ExpandTime + FadeTime;
+            _ = Task.Run(() =>
             {
                 Thread.Sleep(TimeSpan.FromSeconds(waitTime));
                 Dispatcher.Invoke(() =>
