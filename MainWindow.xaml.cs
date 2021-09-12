@@ -86,9 +86,13 @@ namespace QQS_UI
             noteGradientStrength.Value = Global.DefaultNoteGradientScale;
             separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
 
-            Global.MaxRenderThreads = Environment.ProcessorCount;
-            maxRenderThreads.Value = Global.MaxRenderThreads;
-            maxRenderThreads.Maximum = Global.MaxRenderThreads * 4;
+            int processorCount = Environment.ProcessorCount;
+            maxMidiLoaderConcurrency.Value = processorCount;
+            maxRenderConcurrency.Value = processorCount;
+            Global.MaxMIDILoaderConcurrency = -1;
+            Global.MaxRenderConcurrency = -1;
+
+            options.VideoQuality = 17;
         }
 
         private void openMidi_Click(object sender, RoutedEventArgs e)
@@ -211,7 +215,7 @@ namespace QQS_UI
 
         private void crfSelect_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
         {
-            options.CRF = (int)crfSelect.Value;
+            options.VideoQuality = (int)crfSelect.Value;
         }
 
         private void enableTranparentBackground_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
@@ -519,11 +523,44 @@ namespace QQS_UI
             }
         }
 
-        private void maxRenderThreads_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+        private void maxRenderConcurrency_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
         {
-            Global.MaxRenderThreads = (int)e.NewValue;
+            Global.MaxRenderConcurrency = !useDefaultRenderConcurrency.IsChecked ? (int)e.NewValue : -1;
         }
 
+        private void maxMidiLoaderConcurrency_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+        {
+            Global.MaxMIDILoaderConcurrency = !useDefaultMidiLoaderConcurrency.IsChecked ? (int)e.NewValue : -1;
+        }
+
+        private void useDefaultRenderConcurrency_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.MaxRenderConcurrency = e.NewValue ? -1 : (int)maxRenderConcurrency.Value;
+        }
+
+        private void useDefaultMidiLoaderConcurrency_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.MaxMIDILoaderConcurrency = e.NewValue ? -1 : (int)maxMidiLoaderConcurrency.Value;
+        }
+
+        private void videoQualityOptions_RadioChanged(object sender, RoutedEventArgs e)
+        {
+            if (sender == crfOptions)
+            {
+                options.QualityOptions = VideoQualityOptions.CRF;
+                options.VideoQuality = crfSelect != null ? (int)crfSelect.Value : 17;
+            }
+            else
+            {
+                options.QualityOptions = VideoQualityOptions.Bitrate;
+                options.VideoQuality = videoBitrate != null ? (int)videoBitrate.Value : 50000;
+            }
+        }
+
+        private void videoBitrate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+        {
+            options.VideoQuality = (int)e.NewValue;
+        }
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
@@ -537,7 +574,7 @@ namespace QQS_UI
                 byte r = Convert.ToByte(coltxt.Substring(0, 2), 16);
                 byte g = Convert.ToByte(coltxt.Substring(2, 2), 16);
                 byte b = Convert.ToByte(coltxt.Substring(4, 2), 16);
-                uint col = 0xff000000U | r | (uint)(g << 8) | (uint)(b << 16);
+                uint col = 0xFF000000U | r | (uint)(g << 8) | (uint)(b << 16);
                 options.DivideBarColor = col;
                 previewColor.Background = new SolidColorBrush(new Color()
                 {

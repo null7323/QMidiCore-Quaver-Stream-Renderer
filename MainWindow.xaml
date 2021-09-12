@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.11" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.12" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -82,7 +82,7 @@
                                 <Label Content="音符速度: " HorizontalAlignment="Left" Width="150"/>
                                 <ui:ValueSlider Minimum="0.25" Maximum="10" HorizontalAlignment="Left" Width="222" Value="1" TrueMin="0.25" TrueMax="10" Step="0.1" DecimalPoints="2" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="noteSpeed" ValueChanged="noteSpeed_ValueChanged"/>
                             </DockPanel>
-                            <DockPanel Margin="0,10,0,0">
+                            <DockPanel Margin="0,0,0,0">
                                 <Label Content="键盘高度 (%): " HorizontalAlignment="Left" Width="150"/>
                                 <ui:NumberSelect Minimum="5" Maximum="45" Value="15" x:Name="keyboardHeightPercentage" HorizontalAlignment="Left" Width="100" ValueChanged="keyboardHeightPercentage_ValueChanged">
                                     <ui:NumberSelect.IsEnabled>
@@ -282,8 +282,21 @@
                     <StackPanel>
                         <Label Content="高级设置" FontSize="20" Margin="0,15,0,0"/>
                         <DockPanel Margin="0,10,0,0">
-                            <Label Content="渲染最大线程数:" Width="150" HorizontalAlignment="Left"/>
-                            <ui:NumberSelect Minimum="1" Maximum="256" HorizontalAlignment="Left" Width="100" x:Name="maxRenderThreads" ValueChanged="maxRenderThreads_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                            <Label Content="MIDI最大并发数:" Width="150" HorizontalAlignment="Left"/>
+                            <ui:NumberSelect Minimum="1" Maximum="256" HorizontalAlignment="Left" Width="100" x:Name="maxMidiLoaderConcurrency" ValueChanged="maxMidiLoaderConcurrency_ValueChanged" IsEnabled="{Binding ElementName=useDefaultMidiLoaderConcurrency, Path=IsChecked, Converter={StaticResource NotValueConverter}}"/>
+                            <ui:BetterCheckbox Text="使用默认值" Margin="5,0,0,0" x:Name="useDefaultMidiLoaderConcurrency" IsChecked="True" CheckToggled="useDefaultMidiLoaderConcurrency_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <Label Content="渲染最大并发数:" Width="150" HorizontalAlignment="Left"/>
+                            <ui:NumberSelect Minimum="1" Maximum="256" HorizontalAlignment="Left" Width="100" x:Name="maxRenderConcurrency" ValueChanged="maxRenderConcurrency_ValueChanged">
+                                <ui:NumberSelect.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding ElementName="notRenderingOrPreviewing" Path="IsEnabled"/>
+                                        <Binding ElementName="useDefaultRenderConcurrency" Path="IsChecked" Converter="{StaticResource NotValueConverter}"/>
+                                    </MultiBinding>
+                                </ui:NumberSelect.IsEnabled>
+                            </ui:NumberSelect>
+                            <ui:BetterCheckbox Text="使用默认值" Margin="5,0,0,0" x:Name="useDefaultRenderConcurrency" IsChecked="True" CheckToggled="useDefaultRenderConcurrency_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
                         </DockPanel>
                     </StackPanel>
                 </TabItem>
@@ -292,8 +305,26 @@
                         <StackPanel>
                             <Label Content="输出" Margin="0,15,0,0" FontSize="20"/>
                             <DockPanel Margin="0,10,0,0">
-                                <Label Content="CRF: " HorizontalAlignment="Left" Width="150" Margin="0,0,0,0"/>
-                                <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="100" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
+                                <ui:BetterRadio Text="CRF" Width="150" ParentDepth="3" x:Name="crfOptions" IsChecked="True" IsEnabled="{DynamicResource notRenderingOrPreviewing}" RadioChecked="videoQualityOptions_RadioChanged"/>
+                                <ui:NumberSelect Minimum="0" Maximum="51" Step="1" Value="17" Width="100" HorizontalAlignment="Left" x:Name="crfSelect" ValueChanged="crfSelect_ValueChanged">
+                                    <ui:NumberSelect.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                            <Binding Path="IsChecked" ElementName="crfOptions"/>
+                                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                        </MultiBinding>
+                                    </ui:NumberSelect.IsEnabled>
+                                </ui:NumberSelect>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <ui:BetterRadio Text="比特率限制 (kbps)" Width="150" ParentDepth="3" x:Name="bitrateOptions" HorizontalAlignment="Left" IsEnabled="{DynamicResource notRenderingOrPreviewing}" RadioChecked="videoQualityOptions_RadioChanged"/>
+                                <ui:NumberSelect Minimum="1000" Maximum="5000000" Value="50000" HorizontalAlignment="Left" Width="100" x:Name="videoBitrate" ValueChanged="videoBitrate_ValueChanged">
+                                    <ui:NumberSelect.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                            <Binding Path="IsChecked" ElementName="bitrateOptions"/>
+                                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                        </MultiBinding>
+                                    </ui:NumberSelect.IsEnabled>
+                                </ui:NumberSelect>
                             </DockPanel>
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="FPS:" HorizontalAlignment="Left" Width="150"/>
@@ -335,12 +366,26 @@
         </DockPanel>
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <DockPanel Margin="0,10,0,0">
-                <Button Content="开始渲染" Width="130" Margin="0,20,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="startRender" Click="startRender_Click" HorizontalAlignment="Left"/>
-                <Button Content="开始预览" Width="130" Margin="10,20,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="startPreview" Click="startPreview_Click" HorizontalAlignment="Left"/>
+                <Button Content="开始渲染" Width="130" Margin="0,20,0,0" x:Name="startRender" Click="startRender_Click" HorizontalAlignment="Left">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                            <Binding Path="IsEnabled" ElementName="midiLoaded"/>
+                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                </Button>
+                <Button Content="开始预览" Width="130" Margin="10,20,0,0" x:Name="startPreview" Click="startPreview_Click" HorizontalAlignment="Left">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AndValueConverter}">
+                            <Binding Path="IsEnabled" ElementName="midiLoaded"/>
+                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                </Button>
                 <ui:BetterCheckbox x:Name="limitPreviewFPS" Text="限制预览 FPS" Margin="5,20,0,0" IsChecked="True" HorizontalAlignment="Left" CheckToggled="limitPreviewFPS_CheckToggled" IsEnabled="{DynamicResource notRendering}"/>
             </DockPanel>
             <DockPanel Margin="0,10,0,0" VerticalAlignment="Bottom">
-                <Button Content="停止" Width="270" Margin="0,0,0,0" IsEnabled="{Binding ElementName=startRender, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
+                <Button Content="停止" Width="270" Margin="0,0,0,0" IsEnabled="{Binding ElementName=notRenderingOrPreviewing, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
                 <ui:BetterCheckbox Text="透明视频背景" IsChecked="False" Margin="5,0,0,0" x:Name="enableTranparentBackground" CheckToggled="enableTranparentBackground_CheckToggled">
                     <ui:BetterCheckbox.IsEnabled>
                         <MultiBinding Converter="{StaticResource AndValueConverter}">
