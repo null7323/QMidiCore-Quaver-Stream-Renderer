@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.2.12" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.2.13" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,6 +24,7 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="10">
+        <Grid IsEnabled="{DynamicResource notRendering}" Name="notRendering"/>
         <DockPanel>
             <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left">
                 <TabItem Header="MIDI" Style="{StaticResource SubTabItems}">
@@ -315,8 +316,8 @@
                                     </ui:NumberSelect.IsEnabled>
                                 </ui:NumberSelect>
                             </DockPanel>
-                            <DockPanel Margin="0,10,0,0">
-                                <ui:BetterRadio Text="比特率限制 (kbps)" Width="150" ParentDepth="3" x:Name="bitrateOptions" HorizontalAlignment="Left" IsEnabled="{DynamicResource notRenderingOrPreviewing}" RadioChecked="videoQualityOptions_RadioChanged"/>
+                            <DockPanel Margin="0,5,0,0">
+                                <ui:BetterRadio Text="比特率 (kbps)" Width="150" ParentDepth="3" x:Name="bitrateOptions" HorizontalAlignment="Left" IsEnabled="{DynamicResource notRenderingOrPreviewing}" RadioChecked="videoQualityOptions_RadioChanged"/>
                                 <ui:NumberSelect Minimum="1000" Maximum="5000000" Value="50000" HorizontalAlignment="Left" Width="100" x:Name="videoBitrate" ValueChanged="videoBitrate_ValueChanged">
                                     <ui:NumberSelect.IsEnabled>
                                         <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -326,15 +327,15 @@
                                     </ui:NumberSelect.IsEnabled>
                                 </ui:NumberSelect>
                             </DockPanel>
-                            <DockPanel Margin="0,10,0,0">
+                            <DockPanel Margin="0,5,0,0">
                                 <Label Content="FPS:" HorizontalAlignment="Left" Width="150"/>
                                 <ui:NumberSelect Minimum="15" Maximum="480" Value="60" x:Name="fps" HorizontalAlignment="Left" Width="100" ValueChanged="fps_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
                             </DockPanel>
-                            <DockPanel Margin="0,10,0,0">
+                            <DockPanel Margin="0,5,0,0">
                                 <Label Content="延迟启动 (秒):" HorizontalAlignment="Left" Width="150"/>
                                 <ui:NumberSelect Minimum="0" Maximum="10" Value="0" x:Name="delayStart" HorizontalAlignment="Left" Width="100" ValueChanged="delayStart_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}" Step="0.1" DecimalPoints="1"/>
                             </DockPanel>
-                            <DockPanel Margin="0,10,0,0">
+                            <DockPanel Margin="0,5,0,0">
                                 <Label Content="渲染分辨率: " HorizontalAlignment="Left" Width="150"/>
                                 <Label Content="宽"/>
                                 <ui:NumberSelect x:Name="renderWidth" Value="1920" Minimum="480" Maximum="7680" Width="100" HorizontalAlignment="Left" ValueChanged="renderWidth_ValueChanged" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
@@ -357,7 +358,7 @@
                             <DockPanel Margin="0,10,0,0">
                                 <Label Content="FFMpeg 附加参数:" Width="150"/>
                                 <TextBox Text="" Width="420" x:Name="additionalFFArgs" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
-                                <ui:BetterCheckbox x:Name="usePNGEncoder" Text="使用 PNG 编码器" Margin="5,0,0,0" IsChecked="False" CheckToggled="usePNGEncoder_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" HorizontalAlignment="Left" Width="150"/>
+                                <ui:BetterCheckbox Text="透明视频背景" IsChecked="False" Margin="5,0,0,0" x:Name="enableTranparentBackground" CheckToggled="enableTranparentBackground_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}"/>
                             </DockPanel>
                         </StackPanel>
                     </Grid>
@@ -386,14 +387,7 @@
             </DockPanel>
             <DockPanel Margin="0,10,0,0" VerticalAlignment="Bottom">
                 <Button Content="停止" Width="270" Margin="0,0,0,0" IsEnabled="{Binding ElementName=notRenderingOrPreviewing, Path=IsEnabled, Converter={StaticResource NotValueConverter}}" x:Name="interruptButton" Click="interruptButton_Click" HorizontalAlignment="Left"/>
-                <ui:BetterCheckbox Text="透明视频背景" IsChecked="False" Margin="5,0,0,0" x:Name="enableTranparentBackground" CheckToggled="enableTranparentBackground_CheckToggled">
-                    <ui:BetterCheckbox.IsEnabled>
-                        <MultiBinding Converter="{StaticResource AndValueConverter}">
-                            <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
-                            <Binding Path="IsChecked" ElementName="usePNGEncoder"/>
-                        </MultiBinding>
-                    </ui:BetterCheckbox.IsEnabled>
-                </ui:BetterCheckbox>
+                <ui:BetterCheckbox Text="暂停预览" Width="270" Margin="5" IsEnabled="{Binding ElementName=notRendering, Path=IsEnabled}" x:Name="pause" CheckToggled="pause_CheckToggled"/>
             </DockPanel>
         </StackPanel>
     </Grid>

@@ -35,7 +35,6 @@ namespace QQS_UI
         private readonly CustomColor customColors;
         private int keyHeightPercentage = 15;
         private const string DefaultVideoFilter = "视频 (*.mp4, *.avi, *.mov)|*.mp4;*.avi;*.mov",
-            PNGVideoFilter = "视频 (*.mp4, *.mov)|*.mp4, *.mov",
             TransparentVideoFilter = "视频 (*.mov)|*.mov";
         public MainWindow()
         {
@@ -166,7 +165,7 @@ namespace QQS_UI
         {
             SaveFileDialog dialog = new SaveFileDialog()
             {
-                Filter = options.TransparentBackground ? TransparentVideoFilter : (options.PNGEncoder ? PNGVideoFilter : DefaultVideoFilter),
+                Filter = options.TransparentBackground ? TransparentVideoFilter : DefaultVideoFilter,
                 Title = "选择保存输出视频的位置",
                 InitialDirectory = config.CachedVideoDirectory
             };
@@ -220,12 +219,16 @@ namespace QQS_UI
 
         private void enableTranparentBackground_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
-            options.TransparentBackground = enableTranparentBackground.IsChecked;
+            options.TransparentBackground = e.NewValue;
             if (options.TransparentBackground)
             {
                 if (!outputPath.Text.EndsWith(".mov"))
                 {
                     outputPath.Text = outputPath.Text.Substring(0, outputPath.Text.Length - 4) + ".mov";
+                }
+                if (!additionalFFArgs.Text.ToLower().Contains("-vodec png"))
+                {
+                    additionalFFArgs.Text += " -vcodec png";
                 }
             }
         }
@@ -234,11 +237,6 @@ namespace QQS_UI
             if (file == null)
             {
                 _ = MessageBox.Show("无法进行预览: \nMidi 文件为空. 请检查是否加载了 Midi 文件.", "无 Midi 文件");
-                return;
-            }
-            if (usePNGEncoder.IsChecked)
-            {
-                _ = MessageBox.Show("无法进行预览: \n不支持使用 PNG 序列进行预览.", "无法预览");
                 return;
             }
             options.Input = midiPath.Text;
@@ -525,11 +523,21 @@ namespace QQS_UI
 
         private void maxRenderConcurrency_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
         {
+            if (useDefaultRenderConcurrency == null)
+            {
+                Global.MaxRenderConcurrency = -1;
+                return;
+            }
             Global.MaxRenderConcurrency = !useDefaultRenderConcurrency.IsChecked ? (int)e.NewValue : -1;
         }
 
         private void maxMidiLoaderConcurrency_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
         {
+            if (useDefaultMidiLoaderConcurrency == null)
+            {
+                Global.MaxMIDILoaderConcurrency = -1;
+                return;
+            }
             Global.MaxMIDILoaderConcurrency = !useDefaultMidiLoaderConcurrency.IsChecked ? (int)e.NewValue : -1;
         }
 
@@ -561,6 +569,12 @@ namespace QQS_UI
         {
             options.VideoQuality = (int)e.NewValue;
         }
+
+        private void pause_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.PreviewPaused = e.NewValue;
+        }
+
         private void setBarColor_Click(object sender, RoutedEventArgs e)
         {
             string coltxt = barColor.Text;
@@ -587,26 +601,6 @@ namespace QQS_UI
             catch
             {
                 _ = MessageBox.Show("错误: 无法解析颜色代码.\n请检查输入的颜色代码是否正确.", "无法设置颜色");
-            }
-        }
-
-        private void usePNGEncoder_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
-        {
-            if (outputPath.Text != null)
-            {
-                if (outputPath.Text.EndsWith(".avi") && e.NewValue)
-                {
-                    _ = MessageBox.Show("注意: 暂不支持以.avi为后缀的 PNG 编码视频.\n请保存为.mp4或者.mov格式.", "无法设置为PNG 编码器");
-                    e.Handled = true;
-                    usePNGEncoder.IsChecked = false;
-                    return;
-                }
-            }
-            options.PNGEncoder = usePNGEncoder.IsChecked;
-            if (!options.PNGEncoder)
-            {
-                enableTranparentBackground.IsChecked = false;
-                options.TransparentBackground = false;
             }
         }
     }
