@@ -77,7 +77,7 @@ namespace QQS_UI.Core
                 .Append(height).Append(" -r ").Append(fps).Append(" -i - ");
             // 如果要求使用 png 序列, 那么就加上 -vcodec png 指明编码器; 否则就添加像素格式.
             // if png encoder is requested, append '-vcodec png' to specify the encoder; otherwise append pixel format.
-            _ = options.PNGEncoder ? ffargs.Append("-vcodec png") : ffargs.Append("-pix_fmt yuv420p -preset ultrafast");
+            _ = options.AdditionalFFMpegArgument.ToLower().Contains("-vcodec") ? null : ffargs.Append("-pix_fmt yuv420p -preset ultrafast");
             _ = ffargs.Append(' ').Append(options.AdditionalFFMpegArgument);
             //_ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
             if (options.PreviewMode)

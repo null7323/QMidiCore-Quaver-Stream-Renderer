@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QQS_UI.Core
 {
-    public class CommonRenderer : RendererBase
+    public sealed class CommonRenderer : RendererBase
     {
         private readonly CommonCanvas canvas;
         private readonly bool drawMiddleSquare;
@@ -99,6 +100,15 @@ namespace QQS_UI.Core
             for (; tick < fileTick; tick += spd)
             {
                 frameWatch.Restart();
+                while (isPreview && Global.PreviewPaused && !Interrupt)
+                {
+                    canvas.WriteFrame();
+                    while (Global.LimitPreviewFPS && frameWatch.ElapsedTicks < frameLen)
+                    {
+
+                    }
+                    frameWatch.Restart();
+                }
                 canvas.Clear();
                 tickup = tick + deltaTicks;
                 while (spdidx != spdCount && tempos[spdidx].Tick < tick)
@@ -264,6 +274,15 @@ namespace QQS_UI.Core
             for (; tick < fileTick; tick += spd)
             {
                 frameWatch.Restart();
+                while (isPreview && Global.PreviewPaused && !Interrupt)
+                {
+                    canvas.WriteFrame();
+                    while (Global.LimitPreviewFPS && frameWatch.ElapsedTicks < frameLen)
+                    {
+
+                    }
+                    frameWatch.Restart();
+                }
                 canvas.Clear();
                 tickup = tick + deltaTicks;
                 while (spdidx != spdCount && tempos[spdidx].Tick < tick)

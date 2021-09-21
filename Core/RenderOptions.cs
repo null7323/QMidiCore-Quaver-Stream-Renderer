@@ -17,7 +17,6 @@ namespace QQS_UI.Core
         /// This member is wasted.
         /// </summary>
         public bool TickBased;
-        public bool PNGEncoder;
         public bool TransparentBackground;
         public bool ThinnerNotes;
         public bool DrawSeparator;
@@ -37,7 +36,6 @@ namespace QQS_UI.Core
         public string Input;
         public string Output;
         public string AdditionalFFMpegArgument;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static RenderOptions CreateRenderOptions()
         {
             return new RenderOptions
@@ -50,7 +48,6 @@ namespace QQS_UI.Core
                 NoteSpeed = 1,
                 DivideBarColor = 0xFF0000A0,
                 TickBased = true,
-                PNGEncoder = false,
                 TransparentBackground = false,
                 DrawSeparator = true,
                 PreviewMode = false,

@@ -104,6 +104,7 @@ namespace QQS_UI.Core
         }
 
         public static bool LimitPreviewFPS = true;
+        public static bool PreviewPaused = false;
 
         public static double PressedWhiteKeyGradientScale = 1.0025;
         public const double DefaultPressedWhiteKeyGradientScale = 1.0025;

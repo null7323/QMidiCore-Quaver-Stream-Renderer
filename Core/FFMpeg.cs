@@ -11,7 +11,7 @@ namespace QQS_UI.Core
     /// <summary>
     /// 简单地封装操作ffmpeg的逻辑.
     /// </summary>
-    public unsafe class FFMpeg : IDisposable
+    public unsafe struct FFMpeg : IDisposable
     {
         private readonly CStream stream;
         private readonly ulong frameSize;
@@ -46,9 +46,9 @@ namespace QQS_UI.Core
             }
             GC.SuppressFinalize(this);
         }
-        ~FFMpeg()
-        {
-            stream.Dispose();
-        }
+        //~FFMpeg()
+        //{
+        //    stream.Dispose();
+        //}
     }
 }

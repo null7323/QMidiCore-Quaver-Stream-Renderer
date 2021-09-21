@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QQS_UI.Core
 {
-    public unsafe class CommonCanvas : CanvasBase
+    public unsafe sealed class CommonCanvas : CanvasBase
     {
         private readonly RGBAColor[][][] NoteGradients = new RGBAColor[128][][]; // 补充: 感谢 Tweak 为渐变音符做出的贡献
         private readonly RGBAColor[][] PressedWhiteKeyGradients;
