@@ -84,6 +84,7 @@ namespace QQS_UI
             pressedKeyboardGradientStrength.Value = Global.DefaultPressedWhiteKeyGradientScale;
             noteGradientStrength.Value = Global.DefaultNoteGradientScale;
             separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
+            denseNoteEffectStrength.Value = 5;
 
             int processorCount = Environment.ProcessorCount;
             maxMidiLoaderConcurrency.Value = processorCount;
@@ -573,6 +574,37 @@ namespace QQS_UI
         private void pause_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             Global.PreviewPaused = e.NewValue;
+        }
+
+        private void denseNoteEffect_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.EnableDenseNoteEffect = e.NewValue;
+        }
+
+        private void enableNoteBorder_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.EnableNoteBorder = e.NewValue;
+            if (!e.NewValue)
+            {
+                Global.EnableDenseNoteEffect = false;
+                options.Gradient = false;
+            }
+            else
+            {
+                if (denseNoteEffect != null && denseNoteEffect.IsChecked)
+                {
+                    Global.EnableDenseNoteEffect = true;
+                }
+                if (enableNoteColorGradient != null && enableNoteColorGradient.IsChecked)
+                {
+                    options.Gradient = true;
+                }
+            }
+        }
+
+        private void denseNoteEffectStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.DenseNoteEffectStrength = e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
