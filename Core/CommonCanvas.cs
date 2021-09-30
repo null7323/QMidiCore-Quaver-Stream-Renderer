@@ -303,7 +303,7 @@ namespace QQS_UI.Core
                     else
                     {
                         FillRectangle(keyx[j] - dtWidth, diff - dtWidth, keyw[j] + (2 * dtWidth), bh + dtWidth, 0xFF363636);
-                        FillRectangle(keyx[j], diff, keyw[j], bh + dtHeight, 0xFF000000); // 重新绘制黑键及其颜色. Draws a black key (See Global.DrawMap).
+                        FillRectangle(keyx[j], diff, keyw[j], bh + dtHeight, 0xFF000000);
                     }
                 }
             }
@@ -398,64 +398,126 @@ namespace QQS_UI.Core
             {
                 height = 1;
             }
-
-            //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
-
-            if (height >= 3) // 如果高度足够, 加框. If the height is enough, draw a note border.
+            if (Global.EnableNoteBorder)
             {
-                FillRectangle(notex[key] + 1, y + 1, notew[key] - 1, height - 1, noteColor);
-                DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000); // 绘制音符边框. 感谢 Tweak 对此的贡献.
+                DrawBorderedNote(key, y, height, noteColor);
             }
-            else // 高度不足时, 将音符两侧填充上黑色. If the height is not enough, draw black border at the left and right of the note.
+            else
             {
-                FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
-                int x = notex[key];
-                int xend = x + notew[key];
-                for (int yend = y + height; y != yend; ++y)
+                if (height > 5)
                 {
-                    frameIdx[y][x] = 0xFF000000;
-                    frameIdx[y][xend] = 0xFF000000;
+                    --height;
+                }
+                FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
+            }
+            //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
+        }
+        private void DrawBorderedNote(short key, int y, int height, uint noteColor)
+        {
+            if (height >= 3)
+            {
+                if (y + height != this.height)
+                {
+                    FillRectangle(notex[key] + 1, y + 1, notew[key] - 1, height - 1, noteColor);
+                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000); // 绘制音符边框. 感谢 Tweak 对此的贡献.
+                }
+                else
+                {
+                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
+                    FillRectangle(notex[key] + 1, y + 1, notew[key] - 1, height - 1, noteColor);
+                }
+            }
+            else
+            {
+                if (Global.EnableDenseNoteEffect)
+                {
+                    RGBAColor actualColor = noteColor;
+                    actualColor.R = (byte)(actualColor.R / 5.0);
+                    actualColor.G = (byte)(actualColor.G / 5.0);
+                    actualColor.B = (byte)(actualColor.B / 5.0);
+                    FillRectangle(notex[key], y, notew[key], height, actualColor);
+                }
+                else
+                {
+                    FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
+                    int x = notex[key];
+                    int xend = x + notew[key];
+                    for (int yend = y + height; y != yend; ++y)
+                    {
+                        frameIdx[y][x] = 0xFF000000;
+                        frameIdx[y][xend] = 0xFF000000;
+                    }
                 }
             }
         }
-
-        public void DrawGradientNote(short key, int colorIndex, int y, int height)
+        private void DrawGradientBorderedNote(short key, int colorIndex, int y, int height)
         {
             RGBAColor[] gradientColors = NoteGradients[key][colorIndex];
+            if (height >= 3)
+            {
+                if (y + height != this.height)
+                {
+                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    {
+                        uint col = gradientColors[x - initx];
+                        for (int dy = y + 1, yend = dy + height - 1; dy != yend; ++dy)
+                        {
+                            frameIdx[dy][x] = col;
+                        }
+                    }
+                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
+                }
+                else
+                {
+                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
+                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    {
+                        uint col = gradientColors[x - initx];
+                        for (int dy = y + 1, yend = dy + height - 1; dy != yend; ++dy)
+                        {
+                            frameIdx[dy][x] = col;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Global.EnableDenseNoteEffect)
+                {
+                    int idx = noteGradientDirection == HorizontalGradientDirection.FromLeftToRight ? 0 : gradientColors.Length - 1;
+                    RGBAColor actualColor = gradientColors[idx];
+                    actualColor.R = (byte)(actualColor.R / 5.0);
+                    actualColor.G = (byte)(actualColor.G / 5.0);
+                    actualColor.B = (byte)(actualColor.B / 5.0);
+                    FillRectangle(notex[key], y, notew[key], height, actualColor);
+                }
+                else
+                {
+                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    {
+                        uint col = gradientColors[x - initx];
+                        for (int dy = y, yend = dy + height; dy != yend; ++dy)
+                        {
+                            frameIdx[dy][x] = col;
+                        }
+                    }
+                    int borderx = notex[key];
+                    int borderxEnd = borderx + notew[key];
+                    for (int yend = y + height; y != yend; ++y)
+                    {
+                        frameIdx[y][borderx] = 0xFF000000;
+                        frameIdx[y][borderxEnd] = 0xFF000000;
+                    }
+                }
+            }
+        }
+        public void DrawGradientNote(short key, int colorIndex, int y, int height)
+        {
             if (height < 1)
             {
                 height = 1;
             }
-            if (height >= 3)
-            {
-                for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
-                {
-                    uint col = gradientColors[x - initx];
-                    for (int dy = y + 1, yend = dy + height - 1; dy != yend; ++dy)
-                    {
-                        frameIdx[dy][x] = col;
-                    }
-                }
-                DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
-            }
-            else
-            {
-                for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
-                {
-                    uint col = gradientColors[x - initx];
-                    for (int dy = y, yend = dy + height; dy != yend; ++dy)
-                    {
-                        frameIdx[dy][x] = col;
-                    }
-                }
-                int borderx = notex[key];
-                int borderxEnd = borderx + notew[key];
-                for (int yend = y + height; y != yend; ++y)
-                {
-                    frameIdx[y][borderx] = 0xFF000000;
-                    frameIdx[y][borderxEnd] = 0xFF000000;
-                }
-            }
+            DrawGradientBorderedNote(key, colorIndex, y, height);
         }
 
         private void DrawSeperator()

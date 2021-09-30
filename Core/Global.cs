@@ -120,6 +120,10 @@ namespace QQS_UI.Core
 
         public static int MaxMIDILoaderConcurrency = -1;
         public static int MaxRenderConcurrency = -1;
+
+        public static bool EnableNoteBorder = true;
+        public static bool EnableDenseNoteEffect = true;
+        public static double DenseNoteEffectStrength = 5;
     }
 
     public struct PreviewEvent
