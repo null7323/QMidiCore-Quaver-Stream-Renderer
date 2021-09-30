@@ -432,9 +432,9 @@ namespace QQS_UI.Core
                 if (Global.EnableDenseNoteEffect)
                 {
                     RGBAColor actualColor = noteColor;
-                    actualColor.R = (byte)(actualColor.R / 5.0);
-                    actualColor.G = (byte)(actualColor.G / 5.0);
-                    actualColor.B = (byte)(actualColor.B / 5.0);
+                    actualColor.R = (byte)(actualColor.R / Global.DenseNoteEffectStrength);
+                    actualColor.G = (byte)(actualColor.G / Global.DenseNoteEffectStrength);
+                    actualColor.B = (byte)(actualColor.B / Global.DenseNoteEffectStrength);
                     FillRectangle(notex[key], y, notew[key], height, actualColor);
                 }
                 else
