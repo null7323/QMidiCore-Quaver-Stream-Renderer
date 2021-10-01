@@ -377,6 +377,17 @@ namespace QQS_UI
         private void enableSeparator_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             options.DrawSeparator = e.NewValue;
+            if (e.NewValue)
+            {
+                if (betterBlackKeys != null && betterBlackKeys.IsChecked)
+                {
+                    options.BetterBlackKeys = true;
+                }
+            }
+            else
+            {
+                options.BetterBlackKeys = false;
+            }
         }
 
         private void thinnerNotes_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
@@ -605,6 +616,16 @@ namespace QQS_UI
         private void denseNoteEffectStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Global.DenseNoteEffectStrength = e.NewValue;
+        }
+
+        private void forceGC_Click(object sender, RoutedEventArgs e)
+        {
+            _ = Task.Run(() => GC.Collect());
+        }
+
+        private void whiteKeyShade_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.WhiteKeyShade = e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
