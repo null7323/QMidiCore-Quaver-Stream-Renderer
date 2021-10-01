@@ -17,6 +17,7 @@ namespace QQS_UI.Core
         private readonly bool gradient;
         private readonly bool separator;
         private readonly bool betterBlackKeys;
+        private readonly bool whiteKeyShade;
         private readonly HorizontalGradientDirection noteGradientDirection;
         private readonly VerticalGradientDirection separatorGradientDirection, keyboardGradientDirection;
         public CommonCanvas(in RenderOptions options) : base(options)
@@ -27,8 +28,9 @@ namespace QQS_UI.Core
             separatorGradientDirection = options.SeparatorGradientDirection;
             keyboardGradientDirection = options.KeyboardGradientDirection;
             betterBlackKeys = options.BetterBlackKeys;
+            whiteKeyShade = options.WhiteKeyShade;
 
-            UnpressedWhiteKeyGradients = new RGBAColor[keyh - (keyh / 20)];
+            UnpressedWhiteKeyGradients = new RGBAColor[keyh - (whiteKeyShade ? (keyh / 20) : 0)];
             for (int i = 0; i != 128; ++i)
             {
                 keyx[i] = ((i / 12 * 126) + Global.GenKeyX[i % 12]) * width / 1350;
@@ -264,18 +266,19 @@ namespace QQS_UI.Core
                 return;
             }
             int i, j;
-            int bh = keyh * 64 / 100;
+            int bh = (whiteKeyShade || betterBlackKeys) ? keyh * 64 / 100 : keyh * 66 / 100;
             int bgr = keyh / 20;
             for (i = 0; i != 75; ++i) // 绘制所有白键. 参见 Global.DrawMap. Draws all white keys.
             {
                 j = Global.DrawMap[i];
                 FillRectangle(keyx[j], 0, keyw[j], keyh, KeyColors[j]);
                 DrawRectangle(keyx[j], 0, keyw[j] + 1, keyh, 0xFF000000); // 绘制琴键之间的分隔线. Draws a seperator between two keys.
-                if (!KeyPressed[j]) // 如果当前琴键未被按下
+                if (whiteKeyShade && !KeyPressed[j]) // 如果当前琴键未被按下
                 {
                     DrawRectangle(keyx[j], 0, keyw[j] + 1, bgr, 0xFF000000);
                     FillRectangle(keyx[j] + 1, 1, keyw[j] - 1, bgr - 2, 0xFF999999); // 绘制琴键底部阴影. 感谢 Tweak 对阴影进行改善.
                 }
+
             }
             int diff = keyh - bh;
             if (!betterBlackKeys)
@@ -315,7 +318,9 @@ namespace QQS_UI.Core
                 return;
             }
             // bh: 黑键的高(不是坐标!)
-            int i, j, bh = keyh * 64 / 100, bgr = keyh / 20;
+            int i, j;
+            int bh = (whiteKeyShade || betterBlackKeys) ? keyh * 64 / 100 : keyh * 66 / 100;
+            int bgr = keyh / 20;
             for (i = 0; i != 75; ++i) // 先画白键
             {
                 j = Global.DrawMap[i];
@@ -333,15 +338,18 @@ namespace QQS_UI.Core
                 }
                 else
                 {
-                    for (int y = bgr, yend = keyh; y != yend; ++y)
+                    for (int y = whiteKeyShade ? bgr : 0, inity = y, yend = keyh; y != yend; ++y)
                     {
                         for (int x = keyx[j], xend = x + keyw[j]; x != xend; ++x)
                         {
-                            frameIdx[y][x] = UnpressedWhiteKeyGradients[y - bgr];
+                            frameIdx[y][x] = UnpressedWhiteKeyGradients[y - inity];
                         }
                     }
-                    DrawRectangle(keyx[j], 0, keyw[j] + 1, bgr, 0xFF000000);
-                    FillRectangle(keyx[j] + 1, 1, keyw[j] - 1, bgr - 2, 0xFF999999); // 绘制琴键底部阴影. 感谢 Tweak 对阴影进行改善.
+                    if (whiteKeyShade)
+                    {
+                        DrawRectangle(keyx[j], 0, keyw[j] + 1, bgr, 0xFF000000);
+                        FillRectangle(keyx[j] + 1, 1, keyw[j] - 1, bgr - 2, 0xFF999999);
+                    }
                 }
 
                 DrawRectangle(keyx[j], 0, keyw[j] + 1, keyh, 0xFF000000);

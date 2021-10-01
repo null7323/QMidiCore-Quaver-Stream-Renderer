@@ -17,6 +17,7 @@ namespace QQS_UI.Core
         private readonly bool drawMiddleSquare;
         private readonly bool gradientNotes;
         private readonly bool thinnerNotes;
+        private readonly bool whiteKeyShade;
         private readonly double delayStart;
         private readonly ParallelOptions parallelOptions;
         public CommonRenderer(RenderFile file, in RenderOptions options) : base(file, options)
@@ -26,6 +27,7 @@ namespace QQS_UI.Core
             gradientNotes = options.Gradient;
             thinnerNotes = options.ThinnerNotes;
             delayStart = options.DelayStartSeconds;
+            whiteKeyShade = options.WhiteKeyShade;
 
             parallelOptions = new ParallelOptions
             {
@@ -182,13 +184,17 @@ namespace QQS_UI.Core
                 }
                 if (drawMiddleSquare)
                 {
-                    if (canvas.KeyPressed[60])
+                    RGBAColor col = canvas.KeyColors[60];
+                    col.R = (byte)Math.Round(col.R * 0.62745);
+                    col.G = (byte)Math.Round(col.G * 0.62745);
+                    col.B = (byte)Math.Round(col.B * 0.62745);
+                    if (whiteKeyShade && canvas.KeyPressed[60])
                     {
-                        canvas.FillRectangle(greySquareLeft, greySquareY - ((int)keyHeight / 50), greySquareWidth, greySquareWidth, 0xFFA0A0A0);
+                        canvas.FillRectangle(greySquareLeft, greySquareY - ((int)keyHeight / 50), greySquareWidth, greySquareWidth, col);
                     }
                     else
                     {
-                        canvas.FillRectangle(greySquareLeft, greySquareY, greySquareWidth, greySquareWidth, 0xFFAAAAAA);
+                        canvas.FillRectangle(greySquareLeft, greySquareY, greySquareWidth, greySquareWidth, col);
                     }
                 }
                 canvas.WriteFrame();
@@ -409,13 +415,17 @@ namespace QQS_UI.Core
                 }
                 if (drawMiddleSquare)
                 {
-                    if (canvas.KeyPressed[60])
+                    RGBAColor col = canvas.KeyColors[60];
+                    col.R = (byte)Math.Round(col.R * 0.62745);
+                    col.G = (byte)Math.Round(col.G * 0.62745);
+                    col.B = (byte)Math.Round(col.B * 0.62745);
+                    if (whiteKeyShade && canvas.KeyPressed[60])
                     {
-                        canvas.FillRectangle(greySquareLeft, greySquareY - ((int)keyHeight / 50), greySquareWidth, greySquareWidth, 0xFFA0A0A0);
+                        canvas.FillRectangle(greySquareLeft, greySquareY - ((int)keyHeight / 50), greySquareWidth, greySquareWidth, col);
                     }
                     else
                     {
-                        canvas.FillRectangle(greySquareLeft, greySquareY, greySquareWidth, greySquareWidth, 0xFFAAAAAA);
+                        canvas.FillRectangle(greySquareLeft, greySquareY, greySquareWidth, greySquareWidth, col);
                     }
                 }
                 canvas.WriteFrame();

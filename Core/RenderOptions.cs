@@ -24,6 +24,7 @@ namespace QQS_UI.Core
         public bool DrawGreySquare;
         public bool Gradient;
         public bool BetterBlackKeys;
+        public bool WhiteKeyShade;
         public int Width, Height, FPS, VideoQuality, KeyHeight;
         public VideoQualityOptions QualityOptions;
         public VerticalGradientDirection KeyboardGradientDirection;
@@ -49,6 +50,7 @@ namespace QQS_UI.Core
                 DivideBarColor = 0xFF0000A0,
                 TickBased = true,
                 TransparentBackground = false,
+                WhiteKeyShade = true,
                 DrawSeparator = true,
                 PreviewMode = false,
                 AdditionalFFMpegArgument = string.Empty,
@@ -56,7 +58,7 @@ namespace QQS_UI.Core
                 Gradient = true,
                 ThinnerNotes = true,
                 DelayStartSeconds = 0,
-                BetterBlackKeys = false,
+                BetterBlackKeys = true,
                 KeyboardGradientDirection = VerticalGradientDirection.FromButtomToTop,
                 NoteGradientDirection = HorizontalGradientDirection.FromLeftToRight,
                 SeparatorGradientDirection = VerticalGradientDirection.FromButtomToTop,
