@@ -15,3 +15,6 @@ QMidiCore Quaver Stream Renderer (简称QQS) 是一个黑乐谱渲染器. 原作
 - fnull601
 - MBMS (翻译)
 - And you
+
+### 以下人物不允许拥有、修改、以及使用该软件的权利
+- Mimimix
