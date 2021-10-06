@@ -13,7 +13,7 @@ using QQSAPI;
 
 namespace QQS_UI.Core
 {
-    public unsafe class MidiStream : IDisposable
+    public unsafe struct MidiStream : IDisposable
     {
         private readonly CStream stream;
 
@@ -62,11 +62,6 @@ namespace QQS_UI.Core
             stream.Dispose();
             GC.SuppressFinalize(this);
         }
-
-        ~MidiStream()
-        {
-            stream.Dispose();
-        }
     }
     internal unsafe struct RenderTrackInfo
     {
@@ -77,8 +72,6 @@ namespace QQS_UI.Core
     }
     public unsafe class RenderFile
     {
-        private readonly string midiPath;
-
         public ushort TrackCount;
         public ushort Division;
         public uint MidiTime = 0;
@@ -87,7 +80,7 @@ namespace QQS_UI.Core
         public UnmanagedList<Tempo> Tempos = new UnmanagedList<Tempo>();
         private void Parse()
         {
-            MidiStream stream = new MidiStream(midiPath);
+            MidiStream stream = new MidiStream(MidiPath);
             sbyte* hdr = stackalloc sbyte[4];
 
             _ = stream.Read(hdr, 4, 1);
@@ -130,6 +123,7 @@ namespace QQS_UI.Core
                 _ = stream.Read(trkInfo[i].Data, trkInfo[i].Size, 1);
                 Console.WriteLine("拷贝音轨 #{0} 的信息. 音轨大小: {1} 字节.", i, trkInfo[i].Size);
             }
+            stream.Dispose();
             for (int i = 0; i != 128; ++i)
             {
                 Notes[i] = new UnmanagedList<Note>();
@@ -326,11 +320,10 @@ namespace QQS_UI.Core
             arr.Dispose();
 
             Console.WriteLine("Midi 事件处理完成. 音符总数: {0}.", NoteCount);
-            stream.Dispose();
         }
         public RenderFile(string path)
         {
-            midiPath = path;
+            MidiPath = path;
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException();
@@ -341,6 +334,6 @@ namespace QQS_UI.Core
             Console.WriteLine("加载 Midi 用时: {0:F2} s.", sw.ElapsedMilliseconds / 1000.0);
         }
 
-        public string MidiPath => midiPath;
+        public string MidiPath { get; }
     }
 }

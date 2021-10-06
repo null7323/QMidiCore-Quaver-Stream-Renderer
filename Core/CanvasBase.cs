@@ -17,6 +17,7 @@ namespace QQS_UI.Core
         protected readonly int keyh;
         protected readonly uint lineColor;
         protected readonly ulong frameSize;
+        protected readonly RGBAColor background;
         protected FFMpeg pipe;
         protected readonly int[] keyx = new int[128];
         protected readonly int[] notex = new int[128];
@@ -70,13 +71,26 @@ namespace QQS_UI.Core
             keyh = options.KeyHeight;
             lineColor = options.DivideBarColor;
             frameSize = (ulong)width * (ulong)height * 4ul;
+            background = options.BackgroundColor;
+
+            if (Global.TranslucentNotes)
+            {
+                Array.Copy(Global.KeyColors, Global.NoteColors, Global.KeyColors.Length);
+                double alphaRatio = Global.NoteAlpha / 255.0;
+                for (int i = 0; i != Global.NoteColors.Length; ++i)
+                {
+                    ref RGBAColor c = ref Global.NoteColors[i];
+                    c.R = (byte)(background.R + Math.Round((c.R - background.R) * alphaRatio));
+                    c.G = (byte)(background.G + Math.Round((c.G - background.G) * alphaRatio));
+                    c.B = (byte)(background.B + Math.Round((c.B - background.B) * alphaRatio));
+                    c.A = 0xFF;
+                }
+            }
 
             StringBuilder ffargs = new StringBuilder();
 
             _ = ffargs.Append("-y -hide_banner -f rawvideo -pix_fmt rgba -s ").Append(width).Append('x')
                 .Append(height).Append(" -r ").Append(fps).Append(" -i - ");
-            // 如果要求使用 png 序列, 那么就加上 -vcodec png 指明编码器; 否则就添加像素格式.
-            // if png encoder is requested, append '-vcodec png' to specify the encoder; otherwise append pixel format.
             _ = options.AdditionalFFMpegArgument.ToLower().Contains("-vcodec") ? null : ffargs.Append("-pix_fmt yuv420p -preset ultrafast");
             _ = ffargs.Append(' ').Append(options.AdditionalFFMpegArgument);
             //_ = !options.PreviewMode ? ffargs.Append(" \"").Append(options.Output).Append("\"") : ffargs.Append(" -f sdl2 Preview");
@@ -189,7 +203,28 @@ namespace QQS_UI.Core
                 }
             }
         }
-
+        public void FillTransparentRectangle(int x, int y, int width, int height, uint color)
+        {
+            RGBAColor src = background;
+            RGBAColor tar = new RGBAColor(color);
+            double ratio = Global.NoteAlpha / 255.0;
+            src.R += (byte)Math.Round((tar.R - src.R) * ratio);
+            src.G += (byte)Math.Round((tar.G - src.G) * ratio);
+            src.B += (byte)Math.Round((tar.B - src.B) * ratio);
+            uint c = src;
+            for (int i = x, xend = x + width; i != xend; ++i)
+            {
+                for (int j = y, yend = y + height; j != yend; ++j)
+                {
+                    //src = frameIdx[j][i];
+                    //src.R += (byte)Math.Round((tar.R - src.R) * tar.A / 255.0);
+                    //src.G += (byte)Math.Round((tar.G - src.G) * tar.A / 255.0);
+                    //src.B += (byte)Math.Round((tar.B - src.B) * tar.A / 255.0);
+                    //src.A = 0xFF;
+                    frameIdx[j][i] = c;
+                }
+            }
+        }
         /// <summary>
         /// 清空当前画布.<br/>
         /// Clear the canvas immediately.

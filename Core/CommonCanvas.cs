@@ -8,16 +8,20 @@ using System.Threading.Tasks;
 
 namespace QQS_UI.Core
 {
-    public unsafe sealed class CommonCanvas : CanvasBase
+    public sealed unsafe class CommonCanvas : CanvasBase
     {
         private readonly RGBAColor[][][] NoteGradients = new RGBAColor[128][][]; // 补充: 感谢 Tweak 为渐变音符做出的贡献
         private readonly RGBAColor[][] PressedWhiteKeyGradients;
         private readonly RGBAColor[] UnpressedWhiteKeyGradients;
+        private readonly RGBAColor[] BorderColors;
+        private readonly RGBAColor[] DenseNoteColors;
         public readonly ushort[] KeyTracks = new ushort[128];
         private readonly bool gradient;
         private readonly bool separator;
         private readonly bool betterBlackKeys;
         private readonly bool whiteKeyShade;
+        private readonly bool brighterNotesOnHit;
+        private readonly int borderWidth, borderHeight;
         private readonly HorizontalGradientDirection noteGradientDirection;
         private readonly VerticalGradientDirection separatorGradientDirection, keyboardGradientDirection;
         public CommonCanvas(in RenderOptions options) : base(options)
@@ -29,6 +33,36 @@ namespace QQS_UI.Core
             keyboardGradientDirection = options.KeyboardGradientDirection;
             betterBlackKeys = options.BetterBlackKeys;
             whiteKeyShade = options.WhiteKeyShade;
+            brighterNotesOnHit = options.BrighterNotesOnHit;
+
+            borderWidth = Global.EnableNoteBorder ? (int)Math.Round(0.0006 * Global.NoteBorderWidth * width) : 0;
+            borderHeight = (int)Math.Round((double)borderWidth / width * height);
+
+            if (Global.EnableNoteBorder)
+            {
+                double ratio = Global.NoteAlpha / 255.0;
+                BorderColors = new RGBAColor[Global.KeyColors.Length];
+                Array.Copy(Global.KeyColors, BorderColors, Global.KeyColors.Length);
+                for (int i = 0; i != BorderColors.Length; ++i)
+                {
+                    ref RGBAColor col = ref BorderColors[i];
+                    col.R += (byte)Math.Round((background.R - col.R) * ratio);
+                    col.G += (byte)Math.Round((background.G - col.G) * ratio);
+                    col.B += (byte)Math.Round((background.B - col.B) * ratio);
+                }
+            }
+            if (Global.EnableDenseNoteEffect)
+            {
+                DenseNoteColors = new RGBAColor[Global.KeyColors.Length];
+                Array.Copy(Global.KeyColors, DenseNoteColors, Global.KeyColors.Length);
+                for (int i = 0; i != DenseNoteColors.Length; ++i)
+                {
+                    ref RGBAColor col = ref DenseNoteColors[i];
+                    col.R = (byte)Math.Round(col.R / Global.DenseNoteShade);
+                    col.G = (byte)Math.Round(col.G / Global.DenseNoteShade);
+                    col.B = (byte)Math.Round(col.B / Global.DenseNoteShade);
+                }
+            }
 
             UnpressedWhiteKeyGradients = new RGBAColor[keyh - (whiteKeyShade ? (keyh / 20) : 0)];
             for (int i = 0; i != 128; ++i)
@@ -108,20 +142,22 @@ namespace QQS_UI.Core
                 Array.Copy(keyw, notew, 128);
             }
 
+            // 音符不透明度与255.0的比值
+            double alphaRatio = Global.NoteAlpha / 255.0;
             // 末颜色与初颜色的比值
             double referenceGradientRatio = Math.Pow(Global.NoteGradientScale, 10);
             for (int i = 0; i != 128; ++i)
             {
                 // 初始化索引为i的琴键对应的颜色数组.
-                NoteGradients[i] = new RGBAColor[Global.Colors.Length][];
-                for (int j = 0; j != Global.Colors.Length; ++j)
+                NoteGradients[i] = new RGBAColor[Global.KeyColors.Length][];
+                for (int j = 0; j != Global.KeyColors.Length; ++j)
                 {
                     // 创建大小为音符宽度的数组, 这样就能实现渐变
-                    NoteGradients[i][j] = new RGBAColor[notew[i]];
+                    NoteGradients[i][j] = new RGBAColor[notew[i] - (2 * borderWidth)];
                     // cols是一个引用, 没有发生值的复制
                     RGBAColor[] cols = NoteGradients[i][j];
                     // 初颜色
-                    RGBAColor gradientStart = Global.Colors[j];
+                    RGBAColor gradientStart = Global.KeyColors[j];
                     double r = gradientStart.R, g = gradientStart.G, b = gradientStart.B;
                     // 根据实际音符宽度计算每2个像素之间颜色之比.
                     double actualGradientRatio = Math.Pow(referenceGradientRatio, 1.0 / (notew[i] - 1));
@@ -130,6 +166,14 @@ namespace QQS_UI.Core
                     {
                         int idx = noteGradientDirection == HorizontalGradientDirection.FromLeftToRight ? k : (len - k - 1);
                         cols[idx] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
+                        if (Global.TranslucentNotes)
+                        {
+                            ref RGBAColor c = ref cols[idx];
+                            c.R = (byte)(background.R + Math.Round((c.R - background.R) * alphaRatio));
+                            c.G = (byte)(background.G + Math.Round((c.G - background.G) * alphaRatio));
+                            c.B = (byte)(background.B + Math.Round((c.B - background.B) * alphaRatio));
+                            c.A = 0xFF;
+                        }
                         r /= actualGradientRatio;
                         g /= actualGradientRatio;
                         b /= actualGradientRatio;
@@ -179,13 +223,13 @@ namespace QQS_UI.Core
                     --currentY;
                 }
             }
-            PressedWhiteKeyGradients = new RGBAColor[Global.Colors.Length][];
+            PressedWhiteKeyGradients = new RGBAColor[Global.KeyColors.Length][];
             referenceGradientRatio = Math.Pow(Math.Pow(Global.PressedWhiteKeyGradientScale, 162), 1.0 / keyh);
-            for (int i = 0; i != Global.Colors.Length; ++i)
+            for (int i = 0; i != Global.KeyColors.Length; ++i)
             {
                 PressedWhiteKeyGradients[i] = new RGBAColor[keyh];
                 RGBAColor[] cols = PressedWhiteKeyGradients[i];
-                RGBAColor gradientStart = Global.Colors[i];
+                RGBAColor gradientStart = Global.KeyColors[i];
                 double r = gradientStart.R,
                     g = gradientStart.G,
                     b = gradientStart.B;
@@ -329,7 +373,7 @@ namespace QQS_UI.Core
                     //FillRectangle(keyx[j], 0, keyw[j], keyh, KeyColors[j]);
                     for (int y = 0, yend = keyh; y != yend; ++y)
                     {
-                        RGBAColor col = PressedWhiteKeyGradients[KeyTracks[j] % Global.Colors.Length][y];
+                        RGBAColor col = PressedWhiteKeyGradients[KeyTracks[j] % Global.KeyColors.Length][y];
                         for (int x = keyx[j], xend = x + keyw[j]; x != xend; ++x)
                         {
                             frameIdx[y][x] = col;
@@ -400,7 +444,7 @@ namespace QQS_UI.Core
         /// Draws a note.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawNote(short key, int y, int height, uint noteColor)
+        public void DrawNote(short key, int colorIndex, int y, int height, uint noteColor, bool pressed)
         {
             if (height < 1)
             {
@@ -408,7 +452,7 @@ namespace QQS_UI.Core
             }
             if (Global.EnableNoteBorder)
             {
-                DrawBorderedNote(key, y, height, noteColor);
+                DrawBorderedNote(key, colorIndex, y, height, noteColor);
             }
             else
             {
@@ -416,72 +460,73 @@ namespace QQS_UI.Core
                 {
                     --height;
                 }
-                FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
-            }
-            //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
-        }
-        private void DrawBorderedNote(short key, int y, int height, uint noteColor)
-        {
-            if (height >= 3)
-            {
-                if (y + height != this.height)
+                if (Global.TranslucentNotes)
                 {
-                    FillRectangle(notex[key] + 1, y + 1, notew[key] - 1, height - 1, noteColor);
-                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000); // 绘制音符边框. 感谢 Tweak 对此的贡献.
+                    FillTransparentRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
                 }
                 else
                 {
-                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
-                    FillRectangle(notex[key] + 1, y + 1, notew[key] - 1, height - 1, noteColor);
+                    FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
+                }
+            }
+            //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
+        }
+        private void DrawBorderedNote(short key, int colorIndex, int y, int height, uint noteColor)
+        {
+            RGBAColor borderColor = BorderColors[colorIndex];
+            if (height > 2 * borderHeight)
+            {
+                FillRectangle(notex[key], y, notew[key], height, borderColor);
+                if (y + height != this.height)
+                {
+                    FillRectangle(notex[key] + borderWidth, y + borderHeight, notew[key] - (borderWidth * 2), height - (borderHeight * 2), noteColor);
+                }
+                else
+                {
+                    FillRectangle(notex[key] + borderWidth, y + borderHeight, notew[key] - (borderWidth * 2), height - borderHeight, noteColor);
                 }
             }
             else
             {
                 if (Global.EnableDenseNoteEffect)
                 {
-                    RGBAColor actualColor = noteColor;
-                    actualColor.R = (byte)(actualColor.R / Global.DenseNoteEffectStrength);
-                    actualColor.G = (byte)(actualColor.G / Global.DenseNoteEffectStrength);
-                    actualColor.B = (byte)(actualColor.B / Global.DenseNoteEffectStrength);
-                    FillRectangle(notex[key], y, notew[key], height, actualColor);
+                    FillRectangle(notex[key], y, notew[key], height, DenseNoteColors[colorIndex]);
                 }
                 else
                 {
-                    FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
-                    int x = notex[key];
-                    int xend = x + notew[key];
-                    for (int yend = y + height; y != yend; ++y)
-                    {
-                        frameIdx[y][x] = 0xFF000000;
-                        frameIdx[y][xend] = 0xFF000000;
-                    }
+                    FillRectangle(notex[key], y, notew[key], height, borderColor);
+                    FillRectangle(notex[key] + borderWidth, y, notew[key] - (borderWidth * 2), height, noteColor);
                 }
             }
         }
         private void DrawGradientBorderedNote(short key, int colorIndex, int y, int height)
         {
             RGBAColor[] gradientColors = NoteGradients[key][colorIndex];
-            if (height >= 3)
+            RGBAColor borderColor = Global.KeyColors[colorIndex];
+            borderColor.R = (byte)(borderColor.R / Global.NoteBorderShade);
+            borderColor.G = (byte)(borderColor.G / Global.NoteBorderShade);
+            borderColor.B = (byte)(borderColor.B / Global.NoteBorderShade);
+            if (height > 2 * borderHeight)
             {
                 if (y + height != this.height)
                 {
-                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    FillRectangle(notex[key], y, notew[key], height, borderColor);
+                    for (int x = notex[key] + borderWidth, xend = x + notew[key] - (2 * borderWidth), initx = x; x != xend; ++x)
                     {
                         uint col = gradientColors[x - initx];
-                        for (int dy = y + 1, yend = dy + height - 1; dy != yend; ++dy)
+                        for (int dy = y + borderHeight, yend = y + height - borderHeight; dy != yend; ++dy)
                         {
                             frameIdx[dy][x] = col;
                         }
                     }
-                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
                 }
                 else
                 {
-                    DrawRectangle(notex[key], y, notew[key] + 1, height, 0xFF000000);
-                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    FillRectangle(notex[key], y, notew[key], height, borderColor);
+                    for (int x = notex[key] + borderWidth, xend = x + notew[key] - (2 * borderWidth), initx = x; x != xend; ++x)
                     {
                         uint col = gradientColors[x - initx];
-                        for (int dy = y + 1, yend = dy + height - 1; dy != yend; ++dy)
+                        for (int dy = y + borderHeight, yend = y + height; dy != yend; ++dy)
                         {
                             frameIdx[dy][x] = col;
                         }
@@ -492,16 +537,12 @@ namespace QQS_UI.Core
             {
                 if (Global.EnableDenseNoteEffect)
                 {
-                    int idx = noteGradientDirection == HorizontalGradientDirection.FromLeftToRight ? 0 : gradientColors.Length - 1;
-                    RGBAColor actualColor = gradientColors[idx];
-                    actualColor.R = (byte)(actualColor.R / 5.0);
-                    actualColor.G = (byte)(actualColor.G / 5.0);
-                    actualColor.B = (byte)(actualColor.B / 5.0);
-                    FillRectangle(notex[key], y, notew[key], height, actualColor);
+                    FillRectangle(notex[key], y, notew[key], height, DenseNoteColors[colorIndex]);
                 }
                 else
                 {
-                    for (int x = notex[key] + 1, xend = x + notew[key] - 1, initx = x; x != xend; ++x)
+                    FillRectangle(notex[key], y, notew[key], height, borderColor);
+                    for (int x = notex[key] + borderWidth, xend = x + notew[key] - (2 * borderWidth), initx = x; x != xend; ++x)
                     {
                         uint col = gradientColors[x - initx];
                         for (int dy = y, yend = dy + height; dy != yend; ++dy)
@@ -509,17 +550,17 @@ namespace QQS_UI.Core
                             frameIdx[dy][x] = col;
                         }
                     }
-                    int borderx = notex[key];
-                    int borderxEnd = borderx + notew[key];
-                    for (int yend = y + height; y != yend; ++y)
-                    {
-                        frameIdx[y][borderx] = 0xFF000000;
-                        frameIdx[y][borderxEnd] = 0xFF000000;
-                    }
                 }
+                //int borderx = notex[key];
+                //int borderxEnd = borderx + notew[key];
+                //for (int yend = y + height; y != yend; ++y)
+                //{
+                //    frameIdx[y][borderx] = borderColor;
+                //    frameIdx[y][borderxEnd] = borderColor;
+                //}
             }
         }
-        public void DrawGradientNote(short key, int colorIndex, int y, int height)
+        public void DrawGradientNote(short key, int colorIndex, int y, int height, bool pressed)
         {
             if (height < 1)
             {

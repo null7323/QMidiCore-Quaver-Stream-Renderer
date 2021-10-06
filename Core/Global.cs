@@ -47,14 +47,21 @@ namespace QQS_UI.Core
             0xFFFF3333, 0xFF33FFB1, 0xFFFF33CC, 0xFF4EFF33, 0xFF9933FF, 0xFFE7FF33
         };
         /// <summary>
-        /// 渲染器对象实际使用的颜色.<br/>
-        /// Colors that renderer actually uses.
+        /// 渲染器对象实际使用的键盘颜色.<br/>
+        /// Key colors that renderer actually uses.
         /// </summary>
-        public static RGBAColor[] Colors;
+        public static RGBAColor[] KeyColors;
+        /// <summary>
+        /// 渲染器对象实际使用的音符颜色.<br/>
+        /// Note colors that renderer actually uses.
+        /// </summary>
+        public static RGBAColor[] NoteColors;
         static Global()
         {
-            Colors = new RGBAColor[96];
-            Array.Copy(DefaultColors, Colors, 96);
+            KeyColors = new RGBAColor[96];
+            NoteColors = new RGBAColor[96];
+            Array.Copy(DefaultColors, KeyColors, 96);
+            Array.Copy(DefaultColors, NoteColors, 96);
         }
         /// <summary>
         /// 将 Midi 时间转换为 <see cref="TimeSpan"/>.<br/>
@@ -122,8 +129,13 @@ namespace QQS_UI.Core
         public static int MaxRenderConcurrency = -1;
 
         public static bool EnableNoteBorder = true;
+        public static double NoteBorderWidth = 1;
         public static bool EnableDenseNoteEffect = true;
-        public static double DenseNoteEffectStrength = 5;
+        public static double NoteBorderShade = 5;
+        public static double DenseNoteShade = 5;
+
+        public static bool TranslucentNotes = false;
+        public static byte NoteAlpha = 255;
     }
 
     public struct PreviewEvent

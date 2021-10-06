@@ -83,7 +83,7 @@ namespace QQS_UI.Core
                     noteBegins[i] = end[i] = null;
                 }
             }
-            int colorLen = Global.Colors.Length;
+            int colorLen = Global.KeyColors.Length;
 
             int delayFrames = (int)delayStart * fps;
             canvas.Clear();
@@ -132,15 +132,17 @@ namespace QQS_UI.Core
                     uint j, k, l;
                     bool flag = false;
                     Note* noteptr = noteBegins[i];
+                    bool isCurrentNotePressed;
                     while (noteptr->Start < tickup)
                     {
+                        isCurrentNotePressed = false;
                         if (noteptr == end[i])
                         {
                             break;
                         }
                         if (noteptr->End >= tick)
                         {
-                            l = Global.Colors[noteptr->Track % colorLen];
+                            l = Global.KeyColors[noteptr->Track % colorLen];
                             if (!flag && (flag = true))
                             {
                                 noteBegins[i] = noteptr;
@@ -148,10 +150,11 @@ namespace QQS_UI.Core
                             if (noteptr->Start < tick)
                             {
                                 k = keyHeight;
-                                j = (uint)((float)(noteptr->End - tick) * ppb);
+                                j = (uint)((noteptr->End - tick) * ppb);
                                 canvas.KeyColors[i] = l;
                                 canvas.KeyPressed[i] = true;
                                 canvas.KeyTracks[i] = noteptr->Track;
+                                isCurrentNotePressed = true;
                             }
                             else
                             {
@@ -162,13 +165,14 @@ namespace QQS_UI.Core
                             {
                                 j = height - k;
                             }
+                            l = Global.NoteColors[noteptr->Track % colorLen];
                             if (gradientNotes)
                             {
-                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j);
+                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, isCurrentNotePressed);
                             }
                             else
                             {
-                                canvas.DrawNote((short)i, (int)k, (int)j, l); // each key is individual
+                                canvas.DrawNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, l, isCurrentNotePressed); // each key is individual
                             }
                         }
                         ++noteptr;
@@ -262,7 +266,7 @@ namespace QQS_UI.Core
                     noteBegins[i] = end[i] = null;
                 }
             }
-            int colorLen = Global.Colors.Length;
+            int colorLen = Global.KeyColors.Length;
             int delayFrames = (int)delayStart * fps;
             canvas.Clear();
             if (gradientNotes)
@@ -310,16 +314,18 @@ namespace QQS_UI.Core
                     }
                     uint j, k, l;
                     bool flag = false;
+                    bool isCurrentNotePressed;
                     Note* noteptr = noteBegins[i];
                     while (noteptr->Start < tickup)
                     {
+                        isCurrentNotePressed = false;
                         if (noteptr == end[i])
                         {
                             break;
                         }
                         if (noteptr->End >= tick)
                         {
-                            l = Global.Colors[noteptr->Track % colorLen];
+                            l = Global.KeyColors[noteptr->Track % colorLen];
                             if (!flag && (flag = true))
                             {
                                 noteBegins[i] = noteptr;
@@ -327,10 +333,11 @@ namespace QQS_UI.Core
                             if (noteptr->Start < tick)
                             {
                                 k = keyHeight;
-                                j = (uint)((float)(noteptr->End - tick) * ppb);
+                                j = (uint)((noteptr->End - tick) * ppb);
                                 canvas.KeyColors[i] = l;
                                 canvas.KeyPressed[i] = true;
                                 canvas.KeyTracks[i] = noteptr->Track;
+                                isCurrentNotePressed = true;
                             }
                             else
                             {
@@ -343,11 +350,11 @@ namespace QQS_UI.Core
                             }
                             if (gradientNotes)
                             {
-                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j);
+                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, isCurrentNotePressed);
                             }
                             else
                             {
-                                canvas.DrawNote((short)i, (int)k, (int)j, l); // each key is individual
+                                canvas.DrawNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, l, isCurrentNotePressed); // each key is individual
                             }
                         }
                         ++noteptr;
@@ -362,16 +369,18 @@ namespace QQS_UI.Core
                     }
                     uint j, k, l;
                     bool flag = false;
+                    bool isCurrentNotePressed;
                     Note* noteptr = noteBegins[i];
                     while (noteptr->Start < tickup)
                     {
+                        isCurrentNotePressed = false;
                         if (noteptr == end[i])
                         {
                             break;
                         }
                         if (noteptr->End >= tick)
                         {
-                            l = Global.Colors[noteptr->Track % colorLen];
+                            l = Global.KeyColors[noteptr->Track % colorLen];
                             if (!flag && (flag = true))
                             {
                                 noteBegins[i] = noteptr;
@@ -379,10 +388,11 @@ namespace QQS_UI.Core
                             if (noteptr->Start < tick)
                             {
                                 k = keyHeight;
-                                j = (uint)((float)(noteptr->End - tick) * ppb);
+                                j = (uint)((noteptr->End - tick) * ppb);
                                 canvas.KeyColors[i] = l;
                                 canvas.KeyPressed[i] = true;
                                 canvas.KeyTracks[i] = noteptr->Track;
+                                isCurrentNotePressed = true;
                             }
                             else
                             {
@@ -395,11 +405,11 @@ namespace QQS_UI.Core
                             }
                             if (gradientNotes)
                             {
-                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j);
+                                canvas.DrawGradientNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, isCurrentNotePressed);
                             }
                             else
                             {
-                                canvas.DrawNote((short)i, (int)k, (int)j, l); // each key is individual
+                                canvas.DrawNote((short)i, noteptr->Track % colorLen, (int)k, (int)j, l, isCurrentNotePressed); // each key is individual
                             }
                         }
                         ++noteptr;
