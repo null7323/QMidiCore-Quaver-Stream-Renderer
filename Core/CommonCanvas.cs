@@ -40,7 +40,6 @@ namespace QQS_UI.Core
 
             if (Global.EnableNoteBorder)
             {
-                double ratio = Global.NoteAlpha / 255.0;
                 BorderColors = new RGBAColor[Global.KeyColors.Length];
                 Array.Copy(Global.KeyColors, BorderColors, Global.KeyColors.Length);
                 for (int i = 0; i != BorderColors.Length; ++i)

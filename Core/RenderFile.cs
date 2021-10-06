@@ -320,6 +320,29 @@ namespace QQS_UI.Core
             arr.Dispose();
 
             Console.WriteLine("Midi 事件处理完成. 音符总数: {0}.", NoteCount);
+            Console.WriteLine("正在对 Midi 文件进行 OR 处理.");
+            _ = Parallel.For(0, 128, opt, (i) =>
+            {
+                UnmanagedList<Note> nl = Notes[i];
+                if (nl.Count < 10)
+                {
+                    return;
+                }
+                for (long index = 0, len = nl.Count - 2; index != len;)
+                {
+                    ref Note curr = ref nl[index++];
+                    ref Note next = ref nl[index];
+                    if (curr.Start < next.Start && curr.End > next.Start && curr.End < next.End)
+                    {
+                        curr.End = next.Start;
+                    }
+                    else if (curr.Start == next.Start && curr.End <= next.End)
+                    {
+                        curr.End = curr.Start;
+                    }
+                }
+            });
+            Console.WriteLine("OR 处理完成.");
         }
         public RenderFile(string path)
         {
