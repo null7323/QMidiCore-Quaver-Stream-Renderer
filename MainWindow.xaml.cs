@@ -84,7 +84,10 @@ namespace QQS_UI
             pressedKeyboardGradientStrength.Value = Global.DefaultPressedWhiteKeyGradientScale;
             noteGradientStrength.Value = Global.DefaultNoteGradientScale;
             separatorGradientStrength.Value = Global.DefaultSeparatorGradientScale;
-            denseNoteEffectStrength.Value = 5;
+            noteBorderWidth.Value = 1;
+            noteBorderShade.Value = 5;
+            denseNoteShade.Value = 5;
+            noteAlpha.Value = 144;
 
             int processorCount = Environment.ProcessorCount;
             maxMidiLoaderConcurrency.Value = processorCount;
@@ -613,9 +616,9 @@ namespace QQS_UI
             }
         }
 
-        private void denseNoteEffectStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void noteBorderShade_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Global.DenseNoteEffectStrength = e.NewValue;
+            Global.NoteBorderShade = e.NewValue;
         }
 
         private void forceGC_Click(object sender, RoutedEventArgs e)
@@ -626,6 +629,34 @@ namespace QQS_UI
         private void whiteKeyShade_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             options.WhiteKeyShade = e.NewValue;
+        }
+
+        private void translucentNotes_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            Global.TranslucentNotes = e.NewValue;
+            if (e.NewValue)
+            {
+                Global.NoteAlpha = (noteAlpha != null) ? (byte)noteAlpha.Value : (byte)144;
+            }
+            else
+            {
+                Global.NoteAlpha = 255;
+            }
+        }
+
+        private void noteAlpha_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.NoteAlpha = (byte)e.NewValue;
+        }
+
+        private void noteBorderWidth_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.NoteBorderWidth = e.NewValue;
+        }
+
+        private void denseNoteShade_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)

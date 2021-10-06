@@ -16,7 +16,7 @@ namespace QQS_UI
         {
             if (!File.Exists(colorFileName))
             {
-                string colors = JsonConvert.SerializeObject(Global.Colors);
+                string colors = JsonConvert.SerializeObject(Global.KeyColors);
                 File.WriteAllText(colorFileName, colors);
                 Colors = new RGBAColor[96];
                 Array.Copy(Global.DefaultColors, Colors, 96);
@@ -68,8 +68,8 @@ namespace QQS_UI
         }
 
         /// <summary>
-        /// 将当前实例的颜色拷贝到<see cref="Global.Colors"/>中.<br/>
-        /// Copy colors owned by current instance to <see cref="Global.Colors"/>.
+        /// 将当前实例的颜色拷贝到<see cref="Global.KeyColors"/>中.<br/>
+        /// Copy colors owned by current instance to <see cref="Global.KeyColors"/>.
         /// </summary>
         /// <remarks>
         /// 请注意: 这不是一个线程安全操作.<br/>
@@ -93,8 +93,10 @@ namespace QQS_UI
             {
                 return 1;
             }
-            Global.Colors = new RGBAColor[Colors.Length];
-            Array.Copy(Colors, Global.Colors, Colors.Length);
+            Global.KeyColors = new RGBAColor[Colors.Length];
+            Global.NoteColors = new RGBAColor[Colors.Length];
+            Array.Copy(Colors, Global.KeyColors, Colors.Length);
+            Array.Copy(Colors, Global.NoteColors, Colors.Length);
             return 0;
         }
 
@@ -102,7 +104,7 @@ namespace QQS_UI
         {
             Colors = new RGBAColor[96];
             Array.Copy(Global.DefaultColors, Colors, 96);
-            Global.Colors = Colors;
+            Global.KeyColors = Colors;
         }
 
         public CustomColor Shuffle()
