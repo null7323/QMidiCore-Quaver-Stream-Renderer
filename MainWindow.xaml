@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.4.2" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.4.3" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -219,7 +219,7 @@
                                 </ui:ValueSlider.IsEnabled>
                             </ui:ValueSlider>
                             <Label Content="音符边框宽度" Width="160" HorizontalAlignment="Left" Margin="15,0,0,0"/>
-                            <ui:ValueSlider Minimum="0.5" Maximum="2.5" Value="1" x:Name="noteBorderWidth" Step="0.1" ValueChanged="noteBorderWidth_ValueChanged" DecimalPoints="1" TrueMax="2" TrueMin="1" Width="220">
+                            <ui:ValueSlider Minimum="0.5" Maximum="2.5" Value="1" x:Name="noteBorderWidth" Step="0.1" ValueChanged="noteBorderWidth_ValueChanged" DecimalPoints="2" TrueMax="2.5" TrueMin="0.5" Width="220">
                                 <ui:ValueSlider.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
                                         <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
