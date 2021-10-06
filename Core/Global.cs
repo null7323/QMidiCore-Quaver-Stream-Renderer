@@ -110,6 +110,10 @@ namespace QQS_UI.Core
             return result;
         }
 
+        /// <summary>
+        /// 表示预览时渲染FPS是否被控制不高于目标FPS.<br/>
+        /// Determines whether render FPS cannot be greater than target FPS.
+        /// </summary>
         public static bool LimitPreviewFPS = true;
         public static bool PreviewPaused = false;
 

@@ -35,7 +35,7 @@ namespace QQS_UI.Core
             whiteKeyShade = options.WhiteKeyShade;
             brighterNotesOnHit = options.BrighterNotesOnHit;
 
-            borderWidth = Global.EnableNoteBorder ? (int)Math.Round(0.0006 * Global.NoteBorderWidth * width) : 0;
+            borderWidth = Global.EnableNoteBorder ? (int)Math.Round(0.0008 * Global.NoteBorderWidth * width) : 0;
             borderHeight = (int)Math.Round((double)borderWidth / width * height);
 
             if (Global.EnableNoteBorder)
@@ -46,9 +46,9 @@ namespace QQS_UI.Core
                 for (int i = 0; i != BorderColors.Length; ++i)
                 {
                     ref RGBAColor col = ref BorderColors[i];
-                    col.R += (byte)Math.Round((background.R - col.R) * ratio);
-                    col.G += (byte)Math.Round((background.G - col.G) * ratio);
-                    col.B += (byte)Math.Round((background.B - col.B) * ratio);
+                    col.R = (byte)Math.Round(col.R / Global.NoteBorderShade);
+                    col.G = (byte)Math.Round(col.G / Global.NoteBorderShade);
+                    col.B = (byte)Math.Round(col.B / Global.NoteBorderShade);
                 }
             }
             if (Global.EnableDenseNoteEffect)
@@ -560,6 +560,7 @@ namespace QQS_UI.Core
                 //}
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawGradientNote(short key, int colorIndex, int y, int height, bool pressed)
         {
             if (height < 1)
