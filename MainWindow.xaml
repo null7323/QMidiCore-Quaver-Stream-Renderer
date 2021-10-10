@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.4.3" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.4.4" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -95,7 +95,6 @@
                                 </ui:NumberSelect>
                             </DockPanel>
                             <DockPanel Margin="0,10,0,0">
-                                <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
                                 <ui:BetterCheckbox Text="在中央 C 键绘制小正方形" Margin="0,0,0,0" IsChecked="False" x:Name="drawGreySquare" CheckToggled="drawGreySquare_CheckToggled">
                                     <ui:BetterCheckbox.IsEnabled>
                                         <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -105,12 +104,10 @@
                                     </ui:BetterCheckbox.IsEnabled>
                                 </ui:BetterCheckbox>
                             </DockPanel>
-                            <DockPanel Margin="0,0,0,0">
-                                <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                            <DockPanel Margin="0,5,0,0">
                                 <ui:BetterCheckbox Text="绘制琴键" Margin="0,0,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="True" x:Name="drawKeyboard" CheckToggled="drawKeyboard_CheckToggled"/>
                             </DockPanel>
-                            <DockPanel Margin="0,0,0,0">
-                                <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                            <DockPanel Margin="0,5,0,0">
                                 <ui:BetterCheckbox Text="绘制分割条" HorizontalAlignment="Left" x:Name="enableSeparator" CheckToggled="enableSeparator_CheckToggled" IsChecked="True">
                                     <ui:BetterCheckbox.IsEnabled>
                                         <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -152,11 +149,9 @@
                     <StackPanel Margin="0,15,0,0">
                         <Label Content="视频效果" FontSize="20"/>
                         <DockPanel Margin="0,15,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
                             <ui:BetterCheckbox Text="更细的音符" HorizontalAlignment="Left" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="thinnerNotes" CheckToggled="thinnerNotes_CheckToggled" IsChecked="True"/>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="启用渐变效果 (需要勾选音符边框)" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="enableNoteColorGradient" CheckToggled="enableNoteColorGradient_CheckToggled" IsChecked="True">
                                 <ui:BetterCheckbox.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -166,8 +161,7 @@
                                 </ui:BetterCheckbox.IsEnabled>
                             </ui:BetterCheckbox>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="立体白键" HorizontalAlignment="Left" x:Name="whiteKeyShade" IsChecked="True" CheckToggled="whiteKeyShade_CheckToggled">
                                 <ui:BetterCheckbox.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -177,8 +171,7 @@
                                 </ui:BetterCheckbox.IsEnabled>
                             </ui:BetterCheckbox>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="立体黑键" HorizontalAlignment="Left" x:Name="betterBlackKeys" CheckToggled="betterBlackKeys_CheckToggled" IsChecked="True">
                                 <ui:BetterCheckbox.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -189,12 +182,10 @@
                                 </ui:BetterCheckbox.IsEnabled>
                             </ui:BetterCheckbox>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True" HorizontalAlignment="Left"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="音符边框" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="enableNoteBorder" IsChecked="True" CheckToggled="enableNoteBorder_CheckToggled"/>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox HorizontalAlignment="Left" Margin="7,0,0,0" IsReadOnly="True"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="密集音符效果" x:Name="denseNoteEffect" CheckToggled="denseNoteEffect_CheckToggled" IsChecked="True" HorizontalAlignment="Left">
                                 <ui:BetterCheckbox.IsEnabled>
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
@@ -204,8 +195,7 @@
                                 </ui:BetterCheckbox.IsEnabled>
                             </ui:BetterCheckbox>
                         </DockPanel>
-                        <DockPanel Margin="0,0,0,0">
-                            <TextBox Margin="7,0,0,0" IsReadOnly="True"/>
+                        <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="半透明音符" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="translucentNotes" CheckToggled="translucentNotes_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="False"/>
                         </DockPanel>
                         <DockPanel Margin="0,10,0,0">
