@@ -35,7 +35,7 @@ namespace QQS_UI.Core
             whiteKeyShade = options.WhiteKeyShade;
             brighterNotesOnHit = options.BrighterNotesOnHit;
 
-            borderWidth = Global.EnableNoteBorder ? (int)Math.Round(0.0006 * Global.NoteBorderWidth * width) : 0;
+            borderWidth = Global.EnableNoteBorder ? Math.Max((int)Math.Round(0.0006 * Global.NoteBorderWidth * width), 1) : 0;
             borderHeight = (int)Math.Round((double)borderWidth / width * height);
 
             if (Global.EnableNoteBorder)
