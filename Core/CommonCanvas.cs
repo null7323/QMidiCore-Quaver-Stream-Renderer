@@ -11,22 +11,24 @@ namespace QQS_UI.Core
     public sealed unsafe class CommonCanvas : CanvasBase
     {
         private readonly RGBAColor[][][] NoteGradients = new RGBAColor[128][][]; // 补充: 感谢 Tweak 为渐变音符做出的贡献
+        private readonly RGBAColor[][][] BrightenedNoteGradients = new RGBAColor[128][][]; // 用于存储处理过的渐变色
         private readonly RGBAColor[][] PressedWhiteKeyGradients;
         private readonly RGBAColor[] UnpressedWhiteKeyGradients;
         private readonly RGBAColor[] BorderColors;
         private readonly RGBAColor[] DenseNoteColors;
         public readonly ushort[] KeyTracks = new ushort[128];
-        private readonly bool gradient;
+        private readonly bool enableGradient;
         private readonly bool separator;
         private readonly bool betterBlackKeys;
         private readonly bool whiteKeyShade;
         private readonly bool brighterNotesOnHit;
+        private readonly byte pressedNotesShadeDecrement;
         private readonly int borderWidth, borderHeight;
         private readonly HorizontalGradientDirection noteGradientDirection;
         private readonly VerticalGradientDirection separatorGradientDirection, keyboardGradientDirection;
         public CommonCanvas(in RenderOptions options) : base(options)
         {
-            gradient = options.Gradient;
+            enableGradient = options.Gradient;
             separator = options.DrawSeparator;
             noteGradientDirection = options.NoteGradientDirection;
             separatorGradientDirection = options.SeparatorGradientDirection;
@@ -34,6 +36,12 @@ namespace QQS_UI.Core
             betterBlackKeys = options.BetterBlackKeys;
             whiteKeyShade = options.WhiteKeyShade;
             brighterNotesOnHit = options.BrighterNotesOnHit;
+            pressedNotesShadeDecrement = (byte)options.PressedNotesShadeDecrement;
+
+            if (pressedNotesShadeDecrement == 0)
+            {
+                brighterNotesOnHit = false;
+            }
 
             borderWidth = Global.EnableNoteBorder ? Math.Max((int)Math.Round(0.0006 * Global.NoteBorderWidth * width), 1) : 0;
             borderHeight = (int)Math.Round((double)borderWidth / width * height);
@@ -149,10 +157,19 @@ namespace QQS_UI.Core
             {
                 // 初始化索引为i的琴键对应的颜色数组.
                 NoteGradients[i] = new RGBAColor[Global.KeyColors.Length][];
+                if (brighterNotesOnHit)
+                {
+                    BrightenedNoteGradients[i] = new RGBAColor[Global.KeyColors.Length][];
+                }
                 for (int j = 0; j != Global.KeyColors.Length; ++j)
                 {
                     // 创建大小为音符宽度的数组, 这样就能实现渐变
                     NoteGradients[i][j] = new RGBAColor[notew[i] - (2 * borderWidth)];
+                    if (brighterNotesOnHit)
+                    {
+                        // 同时地, 我们创建一个相同长度的数组, 用于实现当对应音符按下时变化后的颜色.
+                        BrightenedNoteGradients[i][j] = new RGBAColor[NoteGradients[i][j].Length];
+                    }
                     // cols是一个引用, 没有发生值的复制
                     RGBAColor[] cols = NoteGradients[i][j];
                     // 初颜色
@@ -163,9 +180,10 @@ namespace QQS_UI.Core
 
                     for (int k = 0, len = NoteGradients[i][j].Length; k != len; ++k)
                     {
+                        // 根据渐变方向改变索引
                         int idx = noteGradientDirection == HorizontalGradientDirection.FromLeftToRight ? k : (len - k - 1);
                         cols[idx] = new RGBAColor((byte)r, (byte)g, (byte)b, gradientStart.A);
-                        if (Global.TranslucentNotes)
+                        if (Global.TranslucentNotes) // 如果是半透明音符, 那么调整颜色
                         {
                             ref RGBAColor c = ref cols[idx];
                             c.R = (byte)(background.R + Math.Round((c.R - background.R) * alphaRatio));
@@ -173,6 +191,13 @@ namespace QQS_UI.Core
                             c.B = (byte)(background.B + Math.Round((c.B - background.B) * alphaRatio));
                             c.A = 0xFF;
                         }
+
+                        if (brighterNotesOnHit)
+                        {
+                            // 进一步在已经得到的颜色上处理.
+                            BrightenedNoteGradients[i][j][idx] = RGBAColor.MixColors(cols[idx], RGBAColor.White, pressedNotesShadeDecrement);
+                        }
+
                         r /= actualGradientRatio;
                         g /= actualGradientRatio;
                         b /= actualGradientRatio;
@@ -449,6 +474,10 @@ namespace QQS_UI.Core
             {
                 height = 1;
             }
+            if (brighterNotesOnHit && pressed)
+            {
+                noteColor = RGBAColor.MixColors(noteColor, RGBAColor.White, pressedNotesShadeDecrement);
+            }
             if (Global.EnableNoteBorder)
             {
                 DrawBorderedNote(key, colorIndex, y, height, noteColor);
@@ -459,16 +488,8 @@ namespace QQS_UI.Core
                 {
                     --height;
                 }
-                if (Global.TranslucentNotes)
-                {
-                    FillTransparentRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
-                }
-                else
-                {
-                    FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
-                }
+                FillRectangle(notex[key] + 1, y, notew[key] - 1, height, noteColor);
             }
-            //FillRectangle(_KeyX[k] + 1, y, _KeyWidth[k] - 1, h, c);
         }
         private void DrawBorderedNote(short key, int colorIndex, int y, int height, uint noteColor)
         {
@@ -498,9 +519,9 @@ namespace QQS_UI.Core
                 }
             }
         }
-        private void DrawGradientBorderedNote(short key, int colorIndex, int y, int height)
+        private void DrawGradientBorderedNote(short key, int colorIndex, int y, int height, bool pressed)
         {
-            RGBAColor[] gradientColors = NoteGradients[key][colorIndex];
+            RGBAColor[] gradientColors = (pressed && brighterNotesOnHit) ? BrightenedNoteGradients[key][colorIndex] : NoteGradients[key][colorIndex];
             RGBAColor borderColor = Global.KeyColors[colorIndex];
             borderColor.R = (byte)(borderColor.R / Global.NoteBorderShade);
             borderColor.G = (byte)(borderColor.G / Global.NoteBorderShade);
@@ -534,7 +555,7 @@ namespace QQS_UI.Core
             }
             else
             {
-                if (Global.EnableDenseNoteEffect)
+                if (Global.EnableDenseNoteEffect) // 不必要做变白的处理, 因为效果并不明显
                 {
                     FillRectangle(notex[key], y, notew[key], height, DenseNoteColors[colorIndex]);
                 }
@@ -550,13 +571,6 @@ namespace QQS_UI.Core
                         }
                     }
                 }
-                //int borderx = notex[key];
-                //int borderxEnd = borderx + notew[key];
-                //for (int yend = y + height; y != yend; ++y)
-                //{
-                //    frameIdx[y][borderx] = borderColor;
-                //    frameIdx[y][borderxEnd] = borderColor;
-                //}
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -566,7 +580,7 @@ namespace QQS_UI.Core
             {
                 height = 1;
             }
-            DrawGradientBorderedNote(key, colorIndex, y, height);
+            DrawGradientBorderedNote(key, colorIndex, y, height, pressed);
         }
 
         private void DrawSeperator()
@@ -575,7 +589,7 @@ namespace QQS_UI.Core
             {
                 return;
             }
-            if (gradient)
+            if (enableGradient)
             {
                 RGBAColor gradientStart = lineColor;
                 double r = gradientStart.R,

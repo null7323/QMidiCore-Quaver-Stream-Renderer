@@ -15,6 +15,9 @@ namespace QQS_UI.Core
     [StructLayout(LayoutKind.Sequential)]
     public struct RGBAColor
     {
+        public static readonly RGBAColor White = 0xFFFFFFFF;
+        public static readonly RGBAColor Black = 0x00000000;
+
         public byte R;
         public byte G;
         public byte B;
@@ -40,6 +43,7 @@ namespace QQS_UI.Core
         {
             return *(uint*)&color;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe implicit operator RGBAColor(uint color)
         {
             return new RGBAColor(color);
@@ -47,6 +51,15 @@ namespace QQS_UI.Core
         public static unsafe explicit operator YUVColor(RGBAColor col)
         {
             return new YUVColor(col);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static RGBAColor MixColors(RGBAColor foreground, RGBAColor background, byte alpha)
+        {
+            double ratio = alpha / 255.0;
+            background.R += (byte)Math.Round((foreground.R - background.R) * ratio);
+            background.G += (byte)Math.Round((foreground.G - background.G) * ratio);
+            background.B += (byte)Math.Round((foreground.B - background.B) * ratio);
+            return background;
         }
     }
 
@@ -60,7 +73,7 @@ namespace QQS_UI.Core
         {
             Y = (0.299F * rgba.R) + (0.587F * rgba.G) + (0.114F * rgba.B);
             U = (-0.147F * rgba.R) + (-0.289F * rgba.G) + (-0.436F * rgba.B);
-            V = (0.615F * rgba.R) + (-0.515f * rgba.G) + (-0.1f * rgba.B);
+            V = (0.615F * rgba.R) + (-0.515F * rgba.G) + (-0.1F * rgba.B);
         }
         public static explicit operator RGBAColor(in YUVColor yuv)
         {

@@ -85,7 +85,7 @@ namespace QQS_UI.Core
             }
             int colorLen = Global.KeyColors.Length;
 
-            int delayFrames = (int)delayStart * fps;
+            int delayFrames = (int)(delayStart * fps);
             canvas.Clear();
             if (gradientNotes)
             {

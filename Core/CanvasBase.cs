@@ -203,28 +203,6 @@ namespace QQS_UI.Core
                 }
             }
         }
-        public void FillTransparentRectangle(int x, int y, int width, int height, uint color)
-        {
-            RGBAColor src = background;
-            RGBAColor tar = new RGBAColor(color);
-            double ratio = Global.NoteAlpha / 255.0;
-            src.R += (byte)Math.Round((tar.R - src.R) * ratio);
-            src.G += (byte)Math.Round((tar.G - src.G) * ratio);
-            src.B += (byte)Math.Round((tar.B - src.B) * ratio);
-            uint c = src;
-            for (int i = x, xend = x + width; i != xend; ++i)
-            {
-                for (int j = y, yend = y + height; j != yend; ++j)
-                {
-                    //src = frameIdx[j][i];
-                    //src.R += (byte)Math.Round((tar.R - src.R) * tar.A / 255.0);
-                    //src.G += (byte)Math.Round((tar.G - src.G) * tar.A / 255.0);
-                    //src.B += (byte)Math.Round((tar.B - src.B) * tar.A / 255.0);
-                    //src.A = 0xFF;
-                    frameIdx[j][i] = c;
-                }
-            }
-        }
         /// <summary>
         /// 清空当前画布.<br/>
         /// Clear the canvas immediately.

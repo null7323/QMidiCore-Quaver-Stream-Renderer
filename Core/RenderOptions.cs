@@ -26,7 +26,7 @@ namespace QQS_UI.Core
         public bool BetterBlackKeys;
         public bool WhiteKeyShade;
         public bool BrighterNotesOnHit;
-        public int Width, Height, FPS, VideoQuality, KeyHeight;
+        public int Width, Height, FPS, VideoQuality, KeyHeight, PressedNotesShadeDecrement;
         public VideoQualityOptions QualityOptions;
         public VerticalGradientDirection KeyboardGradientDirection;
         public VerticalGradientDirection SeparatorGradientDirection;
@@ -59,7 +59,8 @@ namespace QQS_UI.Core
                 Gradient = true,
                 ThinnerNotes = true,
                 DelayStartSeconds = 0,
-                BrighterNotesOnHit = true,
+                PressedNotesShadeDecrement = 0, // 0 means this option does not work.
+                BrighterNotesOnHit = false,
                 BetterBlackKeys = true,
                 KeyboardGradientDirection = VerticalGradientDirection.FromButtomToTop,
                 NoteGradientDirection = HorizontalGradientDirection.FromLeftToRight,
