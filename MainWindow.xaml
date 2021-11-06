@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.4.5" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.5.0" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -198,6 +198,9 @@
                         <DockPanel Margin="0,5,0,0">
                             <ui:BetterCheckbox Text="半透明音符" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="translucentNotes" CheckToggled="translucentNotes_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="False"/>
                         </DockPanel>
+                        <DockPanel Margin="0,5,0,0">
+                            <ui:BetterCheckbox Text="白化正在演奏的音符" HorizontalAlignment="Left" Width="220" x:Name="brighterPressedNotes" CheckToggled="brighterPressedNotes_CheckToggled" IsEnabled="{DynamicResource notRenderingOrPreviewing}" IsChecked="False"/>
+                        </DockPanel>
                         <DockPanel Margin="0,10,0,0">
                             <Label Content="音符边框颜色深度" Width="160" HorizontalAlignment="Left"/>
                             <ui:ValueSlider Minimum="1" Maximum="25" Width="220" Value="5" TrueMin="1" TrueMax="25" Step="2" DecimalPoints="2" x:Name="noteBorderShade" ValueChanged="noteBorderShade_ValueChanged">
@@ -234,6 +237,17 @@
                                     <MultiBinding Converter="{StaticResource AndValueConverter}">
                                         <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
                                         <Binding Path="IsChecked" ElementName="denseNoteEffect"/>
+                                    </MultiBinding>
+                                </ui:ValueSlider.IsEnabled>
+                            </ui:ValueSlider>
+                        </DockPanel>
+                        <DockPanel>
+                            <Label Content="白化强度" Width="160" HorizontalAlignment="Left"/>
+                            <ui:ValueSlider Minimum="0" Maximum="255" HorizontalAlignment="Left" Width="220" Value="80" x:Name="pressedNoteShadeDecrement" ValueChanged="pressedNoteShadeDecrement_ValueChanged" TrueMin="0" TrueMax="255" DecimalPoints="0" Step="10">
+                                <ui:ValueSlider.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource AndValueConverter}">
+                                        <Binding Path="IsEnabled" ElementName="notRenderingOrPreviewing"/>
+                                        <Binding Path="IsChecked" ElementName="brighterPressedNotes"/>
                                     </MultiBinding>
                                 </ui:ValueSlider.IsEnabled>
                             </ui:ValueSlider>

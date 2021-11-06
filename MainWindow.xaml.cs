@@ -88,6 +88,7 @@ namespace QQS_UI
             noteBorderShade.Value = 5;
             denseNoteShade.Value = 5;
             noteAlpha.Value = 144;
+            pressedNoteShadeDecrement.Value = 80;
 
             int processorCount = Environment.ProcessorCount;
             maxMidiLoaderConcurrency.Value = processorCount;
@@ -656,7 +657,17 @@ namespace QQS_UI
 
         private void denseNoteShade_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            Global.DenseNoteShade = e.NewValue;
+        }
 
+        private void brighterPressedNotes_CheckToggled(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            options.BrighterNotesOnHit = e.NewValue;
+        }
+
+        private void pressedNoteShadeDecrement_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            options.PressedNotesShadeDecrement = 255 - (int)e.NewValue;
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)
