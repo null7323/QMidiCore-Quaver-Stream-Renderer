@@ -73,9 +73,9 @@ namespace QQS_UI.Core
             frameSize = (ulong)width * (ulong)height * 4ul;
             background = options.BackgroundColor;
 
+            Array.Copy(Global.KeyColors, Global.NoteColors, Global.KeyColors.Length);
             if (Global.TranslucentNotes)
             {
-                Array.Copy(Global.KeyColors, Global.NoteColors, Global.KeyColors.Length);
                 double alphaRatio = Global.NoteAlpha / 255.0;
                 for (int i = 0; i != Global.NoteColors.Length; ++i)
                 {
