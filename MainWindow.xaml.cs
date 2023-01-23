@@ -101,7 +101,11 @@ namespace QQS_UI
 
         private void openMidi_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            if (!Directory.Exists(config.CachedMIDIDirectory))
+            {
+                config.CachedMIDIDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            OpenFileDialog dialog = new()
             {
                 Filter = "Midi 文件 (*.mid)|*.mid",
                 InitialDirectory = config.CachedMIDIDirectory
@@ -168,7 +172,11 @@ namespace QQS_UI
 
         private void selectOutput_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog()
+            if (!Directory.Exists(config.CachedVideoDirectory))
+            {
+                config.CachedVideoDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+            }
+            SaveFileDialog dialog = new()
             {
                 Filter = options.TransparentBackground ? TransparentVideoFilter : DefaultVideoFilter,
                 Title = "选择保存输出视频的位置",
@@ -301,7 +309,11 @@ namespace QQS_UI
 
         private void openColorFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            if (!Directory.Exists(config.CachedColorDirectory))
+            {
+                config.CachedColorDirectory = Directory.GetCurrentDirectory();
+            }
+            OpenFileDialog dialog = new()
             {
                 Filter = "JSON 文件 (*.json)|*.json",
                 InitialDirectory = config.CachedColorDirectory

@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using QQS_UI.Core;
 
+#nullable disable
 namespace QQS_UI
 {
     public class CustomColor
@@ -16,7 +16,7 @@ namespace QQS_UI
         {
             if (!File.Exists(colorFileName))
             {
-                string colors = JsonConvert.SerializeObject(Global.KeyColors);
+                string colors = JsonSerializer.Serialize(Global.KeyColors);
                 File.WriteAllText(colorFileName, colors);
                 Colors = new RGBAColor[96];
                 Array.Copy(Global.DefaultColors, Colors, 96);
@@ -26,7 +26,7 @@ namespace QQS_UI
                 try
                 {
                     string colorData = File.ReadAllText(colorFileName);
-                    Colors = JsonConvert.DeserializeObject<RGBAColor[]>(colorData);
+                    Colors = JsonSerializer.Deserialize<RGBAColor[]>(colorData);
                 }
                 catch
                 {
@@ -57,7 +57,7 @@ namespace QQS_UI
             RGBAColor[] lastColors = Colors;
             try
             {
-                Colors = JsonConvert.DeserializeObject<RGBAColor[]>(colorData);
+                Colors = JsonSerializer.Deserialize<RGBAColor[]>(colorData);
             }
             catch
             {
@@ -109,7 +109,7 @@ namespace QQS_UI
 
         public CustomColor Shuffle()
         {
-            CustomColor shuffled = new CustomColor
+            CustomColor shuffled = new()
             {
                 Colors = new RGBAColor[Colors.Length]
             };

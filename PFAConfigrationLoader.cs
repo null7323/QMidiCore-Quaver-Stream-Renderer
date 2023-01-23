@@ -43,13 +43,13 @@ namespace QQS_UI
             {
                 return null;
             }
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(ConfigurationPath);
             XmlNode rootNode = doc.SelectSingleNode("PianoFromAbove");
             XmlNode visualNode = rootNode.SelectSingleNode("Visual");
             XmlNode colors = visualNode.SelectSingleNode("Colors");
             XmlNodeList actualColors = colors.SelectNodes("Color");
-            List<RGBAColor> retColors = new List<RGBAColor>();
+            List<RGBAColor> retColors = new();
             foreach (XmlNode node in actualColors)
             {
                 byte r = byte.Parse(node.Attributes[0].Value);

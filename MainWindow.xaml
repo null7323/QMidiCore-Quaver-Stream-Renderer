@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.5.1" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.5.2" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -26,7 +26,7 @@
     <Grid Margin="10">
         <Grid IsEnabled="{DynamicResource notRendering}" Name="notRendering"/>
         <DockPanel>
-            <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left">
+            <TabControl Style="{StaticResource SubTabs}" HorizontalAlignment="Left" SelectedIndex="0">
                 <TabItem Header="MIDI" Style="{StaticResource SubTabItems}">
                     <Grid>
                         <Grid Name="midiLoaded" IsEnabled="{DynamicResource midiLoaded}"/>

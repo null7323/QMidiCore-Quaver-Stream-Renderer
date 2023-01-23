@@ -1,10 +1,10 @@
-﻿using QQSAPI;
-using SharpExtension;
+﻿using SharpExtension;
 using SharpExtension.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +47,7 @@ namespace QQS_UI.Core
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private unsafe void Render_Thinner()
         {
             // Pixels per beat.
@@ -123,7 +124,9 @@ namespace QQS_UI.Core
                     break;
                 }
                 // 使用并行 for 循环提高性能.
-                _ = Parallel.For(0, 128, parallelOptions, (i) =>
+                _ = Parallel.For(0, 128, parallelOptions,
+                    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+                    (i) =>
                 {
                     if (noteBegins[i] == null)
                     {
@@ -230,6 +233,7 @@ namespace QQS_UI.Core
             canvas.Dispose();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private unsafe void Render_Wider()
         {
             // Pixels per beat.
@@ -305,7 +309,7 @@ namespace QQS_UI.Core
                     break;
                 }
                 // 使用并行 for 循环提高性能.
-                _ = Parallel.For(0, 75, parallelOptions, (i) =>
+                _ = Parallel.For(0, 75, parallelOptions, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (i) =>
                 {
                     i = Global.DrawMap[i];
                     if (noteBegins[i] == null)
@@ -360,7 +364,7 @@ namespace QQS_UI.Core
                         ++noteptr;
                     }
                 });
-                _ = Parallel.For(75, 128, parallelOptions, (i) =>
+                _ = Parallel.For(75, 128, parallelOptions, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (i) =>
                 {
                     i = Global.DrawMap[i];
                     if (noteBegins[i] == null)

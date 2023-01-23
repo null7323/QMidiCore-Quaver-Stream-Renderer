@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using SharpExtension.IO;
 using SharpExtension;
 using SharpExtension.Collections;
-using QQSAPI;
 
 namespace QQS_UI.Core
 {
@@ -128,7 +127,7 @@ namespace QQS_UI.Core
             {
                 Notes[i] = new UnmanagedList<Note>();
             }
-            ParallelOptions opt = new ParallelOptions
+            ParallelOptions opt = new()
             {
                 MaxDegreeOfParallelism = Global.MaxMIDILoaderConcurrency
             };
@@ -321,17 +320,18 @@ namespace QQS_UI.Core
 
             Console.WriteLine("Midi 事件处理完成. 音符总数: {0}.", NoteCount);
             Console.WriteLine("正在对 Midi 文件进行 OR 处理.");
-            _ = Parallel.For(0, 128, opt, (i) =>
+            _ = Parallel.For(0, 128, opt, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (i) =>
             {
                 UnmanagedList<Note> nl = Notes[i];
                 if (nl.Count < 10)
                 {
                     return;
                 }
+                Note* pnl = (Note*)UnsafeMemory.GetActualAddressOf(ref nl[0]);
                 for (long index = 0, len = nl.Count - 2; index != len;)
                 {
-                    ref Note curr = ref nl[index++];
-                    ref Note next = ref nl[index];
+                    ref Note curr = ref pnl[index++];
+                    ref Note next = ref pnl[index];
                     if (curr.Start < next.Start && curr.End > next.Start && curr.End < next.End)
                     {
                         curr.End = next.Start;

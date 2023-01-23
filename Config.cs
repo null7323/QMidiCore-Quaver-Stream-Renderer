@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace QQS_UI
@@ -33,7 +32,7 @@ namespace QQS_UI
                 try
                 {
                     string jsonData = File.ReadAllText(configName);
-                    ConfigPath = JsonConvert.DeserializeObject<DialogPath>(jsonData);
+                    ConfigPath = JsonSerializer.Deserialize<DialogPath>(jsonData);
                 }
                 catch
                 {
@@ -67,7 +66,7 @@ namespace QQS_UI
 
         public void SaveConfig()
         {
-            File.WriteAllText(ConfigName, JsonConvert.SerializeObject(ConfigPath));
+            File.WriteAllText(ConfigName, JsonSerializer.Serialize(ConfigPath));
         }
     }
 }

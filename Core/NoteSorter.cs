@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using QQSAPI;
 using SharpExtension;
 using SharpExtension.Collections;
 
@@ -78,6 +77,7 @@ namespace QQS_UI.Core
         /// <summary>
         /// 内省排序.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static void IntroSort(in Note* collection, in long low, long high, long depth)
         {
             while (high > low)

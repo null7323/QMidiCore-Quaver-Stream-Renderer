@@ -1,5 +1,4 @@
-﻿using QQSAPI;
-using SharpExtension.Collections;
+﻿using SharpExtension.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
