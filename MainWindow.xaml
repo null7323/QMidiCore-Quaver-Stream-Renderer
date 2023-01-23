@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:QQS_UI.UI"
         mc:Ignorable="d"
         FontFamily="Microsoft Yahei"
-        Title="QMidiCore Quaver Stream Renderer 1.5.2" Height="540" Width="960" Background="#FDFDFD">
+        Title="QMidiCore Quaver Stream Renderer 1.6.0" Height="540" Width="960" Background="#FDFDFD">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -352,14 +352,22 @@
                         <StackPanel Margin="0,15,0,0">
                             <Label Content="颜色" FontSize="20"/>
                             <DockPanel Margin="0,10,0,0">
-                                <Label Content="当前颜色文件路径:" Width="150" HorizontalAlignment="Left"/>
+                                <Label Content="当前颜色文件路径 (Json):" Width="200" HorizontalAlignment="Left"/>
                                 <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorPath" IsReadOnly="True"/>
                                 <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openColorFile" Click="openColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
                             </DockPanel>
-                            <Button Content="加载颜色文件" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadColors" Click="loadColors_Click" Margin="0,10,0,0"/>
-                            <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="130" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadPFAColors" Click="loadPFAColors_Click" Margin="0,10,0,0"/>
-                            <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="130" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
-                            <Button Content="随机颜色顺序" HorizontalAlignment="Left" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="shuffleColor" Click="shuffleColor_Click" Width="130"/>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="加载颜色位图路径 (Bmp):" Width="200" HorizontalAlignment="Left"/>
+                                <TextBox Text="默认颜色" HorizontalAlignment="Left" Width="450" x:Name="colorBmpPath" IsReadOnly="True"/>
+                                <Button Content="选择" Width="120" HorizontalAlignment="Left" Margin="15,0,0,0" x:Name="openBmpColorFile" Click="openBmpColorFile_Click" IsEnabled="{DynamicResource notRendering}"/>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button Content="加载颜色文件 (Json)" HorizontalAlignment="Left" Width="150" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadColors" Click="loadColors_Click" Margin="0,10,0,0"/>
+                                <Button Content="加载颜色文件 (Bmp)" HorizontalAlignment="Left" Width="150" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadBmpColors" Click="loadBmpColors_Click" Margin="10,10,0,0"/>
+                            </DockPanel>
+                            <Button Content="加载 PFA 颜色" HorizontalAlignment="Left" Width="150" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="loadPFAColors" Click="loadPFAColors_Click" Margin="0,10,0,0"/>
+                            <Button Content="使用默认颜色" HorizontalAlignment="Left" Width="150" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="useDefaultColors" Click="useDefaultColors_Click"/>
+                            <Button Content="随机颜色顺序" HorizontalAlignment="Left" Margin="0,10,0,0" IsEnabled="{DynamicResource notRenderingOrPreviewing}" x:Name="shuffleColor" Click="shuffleColor_Click" Width="150"/>
                             <DockPanel Margin="0,15,0,0">
                             </DockPanel>
                         </StackPanel>

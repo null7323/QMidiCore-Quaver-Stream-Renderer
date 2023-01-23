@@ -6,14 +6,14 @@ namespace QQS_UI
     public class Program
     {
         [STAThread]
-        private static void Main(string[] args)
+        private static unsafe void Main(string[] args)
         {
             Console.Title = "QMIDICore Quaver Stream Renderer";
 #if !DEBUG
             try
             {
 #endif
-                Application app = new Application();
+                Application app = new();
                 _ = app.Run(new MainWindow());
 #if !DEBUG
             }

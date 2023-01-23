@@ -14,11 +14,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+//using System.Windows.Shapes;
 using QQS_UI.Core;
 using Path = System.IO.Path;
 using System.Diagnostics;
 using System.Threading;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Color = System.Windows.Media.Color;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace QQS_UI
 {
@@ -237,7 +242,7 @@ namespace QQS_UI
             {
                 if (!outputPath.Text.EndsWith(".mov"))
                 {
-                    outputPath.Text = outputPath.Text.Substring(0, outputPath.Text.Length - 4) + ".mov";
+                    outputPath.Text = string.Concat(outputPath.Text.AsSpan(0, outputPath.Text.Length - 4), ".mov");
                 }
                 if (!additionalFFArgs.Text.ToLower().Contains("-vodec png"))
                 {
@@ -282,11 +287,6 @@ namespace QQS_UI
         private void loadColors_Click(object sender, RoutedEventArgs e)
         {
             string filePath = colorPath.Text;
-            if (!filePath.EndsWith(".json"))
-            {
-                _ = MessageBox.Show("无法加载颜色文件.\n当前仅支持.json格式的颜色文件.", "无法加载颜色");
-                return;
-            }
             if (!File.Exists(filePath))
             {
                 _ = MessageBox.Show("无法加载颜色文件: 文件不存在.", "无法加载颜色");
@@ -356,7 +356,7 @@ namespace QQS_UI
             }
             try
             {
-                byte r = Convert.ToByte(coltxt.Substring(0, 2), 16);
+                byte r = Convert.ToByte(coltxt[..2], 16);
                 byte g = Convert.ToByte(coltxt.Substring(2, 2), 16);
                 byte b = Convert.ToByte(coltxt.Substring(4, 2), 16);
                 uint col = 0xff000000U | r | (uint)(g << 8) | (uint)(b << 16);
@@ -680,6 +680,69 @@ namespace QQS_UI
         private void pressedNoteShadeDecrement_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             options.PressedNotesShadeDecrement = 255 - (int)e.NewValue;
+        }
+
+        private void loadBmpColors_Click(object sender, RoutedEventArgs e)
+        {
+            string imagePath = colorBmpPath.Text;
+            if (!File.Exists(imagePath))
+            {
+                _ = MessageBox.Show("加载颜色文件时发生了错误: 文件不存在", "无法加载颜色");
+                return;
+            }
+            try
+            {
+                using Bitmap bmp = new(imagePath);
+                int bmpWidth = bmp.Width, bmpHeight = bmp.Height;
+                BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmpWidth, bmpHeight), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                int numBytes = data.Stride * bmpHeight;
+                RGBAColor[] pickedColors = new RGBAColor[numBytes / 4];
+
+                unsafe
+                {
+                    fixed (RGBAColor* pDest = pickedColors)
+                    {
+                        RGBAColor* first = (RGBAColor*)data.Scan0;
+                        Buffer.MemoryCopy(first, pDest, numBytes, numBytes);
+                    }
+                }
+                
+                bmp.UnlockBits(data);
+
+                customColors.Exchange(pickedColors);
+                int errCode = customColors.SetGlobal();
+                if (errCode != 0)
+                {
+                    _ = MessageBox.Show("设置颜色时发生了错误: 颜色为空.", "无法设置颜色");
+                    return;
+                }
+                _ = MessageBox.Show("颜色加载成功. 一共加载了: " + customColors.Colors.Length + " 种颜色.", "颜色加载完成");
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show($"加载颜色文件时发生了错误: \n{ex.Message}\n栈追踪：\n{ex.StackTrace}", "无法转换颜色");
+            }
+        }
+
+        private void openBmpColorFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Directory.Exists(config.CachedColorDirectory))
+            {
+                config.CachedColorDirectory = Directory.GetCurrentDirectory();
+            }
+            OpenFileDialog dialog = new()
+            {
+                Filter = "支持的Bitmap图片 (*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png",
+                InitialDirectory = config.CachedColorDirectory
+            };
+            if ((bool)dialog.ShowDialog())
+            {
+                string colorDirectory = Path.GetDirectoryName(Path.GetFullPath(dialog.FileName));
+                config.CachedColorDirectory = colorDirectory;
+                colorBmpPath.Text = dialog.FileName;
+                config.SaveConfig();
+            }
         }
 
         private void setBarColor_Click(object sender, RoutedEventArgs e)

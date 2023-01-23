@@ -132,5 +132,17 @@ namespace QQS_UI
 
             return shuffled;
         }
+
+        public CustomColor Exchange(RGBAColor[] colors)
+        {
+            CustomColor old = new()
+            {
+                Colors = new RGBAColor[Colors.Length]
+            };
+            Array.Copy(Colors, old.Colors, Colors.Length);
+            Colors = new RGBAColor[colors.Length];
+            colors.CopyTo(Colors, 0);
+            return old;
+        }
     }
 }
